@@ -15,6 +15,15 @@
     "cargo": "Dev",
     "sueldoBase": 18000,
     "horasExtras": 19,
-    "foto": "foto-1783799272499-315730403.jpg"
+    "foto": "foto-1783801489265-325175748.jpg"
+  },
+  {
+    "id": "1783802514291-z5e7o",
+    "nombre": "Roberth Idrobo",
+    "cedula": "V-1882828",
+    "cargo": "Barrendero",
+    "sueldoBase": 1000,
+    "horasExtras": 999,
+    "foto": "foto-1783802514282-908495399.jpg"
   }
 ]

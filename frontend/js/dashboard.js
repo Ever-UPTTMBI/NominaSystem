@@ -73,6 +73,8 @@ function initEstadisticas(container) {
         const gastoSpan = container.querySelector('#gastoTotal');
         if (totalSpan) totalSpan.textContent = total;
         if (gastoSpan) gastoSpan.textContent = suma.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' Bs';
+        
+        renderizarGraficos(empleados, container);
     } else {
         obtenerEmpleados().then(empleados => {
             const total = empleados.length;
@@ -82,6 +84,8 @@ function initEstadisticas(container) {
             if (totalSpan) totalSpan.textContent = total;
             if (gastoSpan) gastoSpan.textContent = suma.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' Bs';
             if (uiInstance) uiInstance.empleados = empleados;
+            
+            renderizarGraficos(empleados, container);
         }).catch(() => {
             const totalSpan = container.querySelector('#totalEmpleados');
             const gastoSpan = container.querySelector('#gastoTotal');
@@ -89,6 +93,214 @@ function initEstadisticas(container) {
             if (gastoSpan) gastoSpan.textContent = 'Error';
         });
     }
+}
+
+function renderizarGraficos(empleados, container) {
+    const ctxCargos = container.querySelector('#cargosChart');
+    const ctxSueldos = container.querySelector('#sueldosChart');
+    const ctxHoras = container.querySelector('#horasExtrasChart');
+    const ctxComparativa = container.querySelector('#comparativaConceptosChart');
+    
+    if (!ctxCargos || !ctxSueldos || !ctxHoras || !ctxComparativa) return;
+    
+    // Destruir instancias previas para evitar colisiones en SPA
+    if (window.cargosChartInstance) window.cargosChartInstance.destroy();
+    if (window.sueldosChartInstance) window.sueldosChartInstance.destroy();
+    if (window.horasExtrasChartInstance) window.horasExtrasChartInstance.destroy();
+    if (window.comparativaConceptosChartInstance) window.comparativaConceptosChartInstance.destroy();
+
+    const isNight = document.body.classList.contains('night-mode');
+    const textColor = isNight ? '#cbd5e1' : '#475569';
+    const gridColor = isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+
+    // 1. Datos para cargos (Distribución)
+    const cargosCount = {};
+    empleados.forEach(emp => {
+        const cargo = emp.cargo || 'Sin Especificar';
+        cargosCount[cargo] = (cargosCount[cargo] || 0) + 1;
+    });
+
+    const labelsCargos = Object.keys(cargosCount);
+    const dataCargos = Object.values(cargosCount);
+
+    const colors = [
+        '#1e3c72', '#3b82f6', '#10b981', '#f59e0b', '#6366f1',
+        '#8b5cf6', '#ec4899', '#14b8a6', '#f43f5e', '#06b6d4'
+    ];
+    const colorsDark = [
+        '#D4AF37', '#E5A96E', '#34d399', '#3b82f6', '#818cf8',
+        '#a78bfa', '#f472b6', '#2dd4bf', '#fb7185', '#22d3ee'
+    ];
+    const palette = isNight ? colorsDark : colors;
+
+    window.cargosChartInstance = new Chart(ctxCargos, {
+        type: 'doughnut',
+        data: {
+            labels: labelsCargos,
+            datasets: [{
+                data: dataCargos,
+                backgroundColor: palette.slice(0, labelsCargos.length),
+                borderWidth: isNight ? 1 : 2,
+                borderColor: isNight ? '#222222' : '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: textColor,
+                        font: { family: 'Inter', size: 11 }
+                    }
+                }
+            }
+        }
+    });
+
+    // 2. Datos para sueldos netos (Comparación)
+    const labelsSueldos = empleados.map(emp => {
+        const primerNombre = emp.nombre.split(' ')[0];
+        const lastDigits = emp.cedula.includes('-') ? emp.cedula.split('-')[1].substring(0, 4) : emp.id.substring(0, 4);
+        return `${primerNombre} (${lastDigits}...)`;
+    });
+    const dataSueldos = empleados.map(emp => emp.sueldoNeto || 0);
+
+    window.sueldosChartInstance = new Chart(ctxSueldos, {
+        type: 'bar',
+        data: {
+            labels: labelsSueldos,
+            datasets: [{
+                label: 'Sueldo Neto (Bs)',
+                data: dataSueldos,
+                backgroundColor: isNight ? 'rgba(212, 175, 55, 0.85)' : 'rgba(30, 60, 114, 0.85)',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        color: textColor,
+                        font: { family: 'Inter', size: 10 }
+                    }
+                },
+                y: {
+                    grid: { color: gridColor },
+                    ticks: {
+                        color: textColor,
+                        font: { family: 'Inter', size: 10 }
+                    }
+                }
+            }
+        }
+    });
+
+    // 3. Ranking de Horas Extras por Empleado (Gráfico de Barras Horizontal)
+    const empleadosOrdenadosHE = [...empleados].sort((a, b) => (b.horasExtras || 0) - (a.horasExtras || 0));
+    const labelsHE = empleadosOrdenadosHE.map(emp => {
+        const primerNombre = emp.nombre.split(' ')[0];
+        const lastDigits = emp.cedula.includes('-') ? emp.cedula.split('-')[1].substring(0, 4) : emp.id.substring(0, 4);
+        return `${primerNombre} (${lastDigits})`;
+    });
+    const dataHE = empleadosOrdenadosHE.map(emp => emp.horasExtras || 0);
+
+    window.horasExtrasChartInstance = new Chart(ctxHoras, {
+        type: 'bar',
+        data: {
+            labels: labelsHE,
+            datasets: [{
+                label: 'Horas Extras',
+                data: dataHE,
+                backgroundColor: isNight ? 'rgba(52, 211, 153, 0.85)' : 'rgba(16, 185, 129, 0.85)',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Barras horizontales
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    grid: { color: gridColor },
+                    ticks: {
+                        color: textColor,
+                        font: { family: 'Inter', size: 10 },
+                        stepSize: 1
+                    }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: {
+                        color: textColor,
+                        font: { family: 'Inter', size: 10 }
+                    }
+                }
+            }
+        }
+    });
+
+    // 4. Asignaciones vs. Deducciones Totales (Barras Comparativas)
+    let totalAsignaciones = 0;
+    let totalDeducciones = 0;
+
+    empleados.forEach(emp => {
+        totalAsignaciones += (emp.sueldoBase || 0) + (emp.pagoHorasExtras || 0) + (emp.bonoFijo || 0);
+        totalDeducciones += (emp.ivss || 0) + (emp.paroForzoso || 0);
+    });
+
+    window.comparativaConceptosChartInstance = new Chart(ctxComparativa, {
+        type: 'bar',
+        data: {
+            labels: ['Ingresos Brutos', 'Retenciones / Deducciones'],
+            datasets: [{
+                data: [totalAsignaciones, totalDeducciones],
+                backgroundColor: [
+                    isNight ? 'rgba(52, 211, 153, 0.85)' : 'rgba(16, 185, 129, 0.85)', // Verde
+                    isNight ? 'rgba(239, 68, 68, 0.85)' : 'rgba(220, 38, 38, 0.85)'   // Rojo
+                ],
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: isNight ? ['#34d399', '#ef4444'] : ['#10b981', '#dc2626']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        color: textColor,
+                        font: { family: 'Inter', size: 11, weight: '600' }
+                    }
+                },
+                y: {
+                    grid: { color: gridColor },
+                    ticks: {
+                        color: textColor,
+                        font: { family: 'Inter', size: 10 },
+                        callback: function(value) {
+                            return value.toLocaleString('es-VE') + ' Bs';
+                        }
+                    }
+                }
+            }
+        }
+    });
 }
 
 function initReporte(container) {

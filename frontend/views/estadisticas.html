@@ -10,5 +10,33 @@
             <span class="stat-value" id="gastoTotal">0.00 Bs</span>
         </div>
     </div>
-    <!-- Aquí luego se agregarán gráficos con Chart.js -->
+    <!-- Panel de gráficos integrados -->
+    <div class="charts-panel" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1.5rem; margin-top:2rem;">
+        <div class="stat-card chart-card" style="text-align: left; padding: 1.5rem;">
+            <span class="stat-label" style="margin-bottom:1.2rem; display:block;">Distribución de Cargos</span>
+            <div class="chart-container" style="position:relative; height:250px; width:100%;">
+                <canvas id="cargosChart"></canvas>
+            </div>
+        </div>
+        <div class="stat-card chart-card" style="text-align: left; padding: 1.5rem;">
+            <span class="stat-label" style="margin-bottom:1.2rem; display:block;">Sueldos Netos por Empleado</span>
+            <div class="chart-container" style="position:relative; height:250px; width:100%;">
+                <canvas id="sueldosChart"></canvas>
+            </div>
+        </div>
+        <!-- Ranking de Horas Extras -->
+        <div class="stat-card chart-card" style="text-align: left; padding: 1.5rem;">
+            <span class="stat-label" style="margin-bottom:1.2rem; display:block;">Ranking de Horas Extras por Empleado</span>
+            <div class="chart-container" style="position:relative; height:250px; width:100%;">
+                <canvas id="horasExtrasChart"></canvas>
+            </div>
+        </div>
+        <!-- Comparativa Asignaciones vs Deducciones -->
+        <div class="stat-card chart-card" style="text-align: left; padding: 1.5rem;">
+            <span class="stat-label" style="margin-bottom:1.2rem; display:block;">Asignaciones vs. Deducciones Totales</span>
+            <div class="chart-container" style="position:relative; height:250px; width:100%;">
+                <canvas id="comparativaConceptosChart"></canvas>
+            </div>
+        </div>
+    </div>
 </div>

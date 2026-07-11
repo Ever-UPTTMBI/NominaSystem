@@ -625,11 +625,12 @@ body.night-mode .receipt-header h3 {
 }
 
 .receipt-avatar {
-    width: 65px;
-    height: 65px;
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #3b82f6;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 body.night-mode .receipt-avatar {
@@ -637,16 +638,17 @@ body.night-mode .receipt-avatar {
 }
 
 .receipt-avatar-placeholder {
-    width: 65px;
-    height: 65px;
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
     background: linear-gradient(135deg, #3b82f6, #1d4ed8);
     color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.35rem;
+    font-size: 2.2rem;
     font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 body.night-mode .receipt-avatar-placeholder {
@@ -744,17 +746,17 @@ body.night-mode .text-success {
     background: #f1f5f9;
     border: 1px solid #cbd5e1;
     color: #475569;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 0.75rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 1.5rem;
+    font-weight: 500;
     cursor: pointer;
-    font-weight: 600;
     transition: all 0.2s;
 }
 
 .btn-detail:hover {
     background: #e2e8f0;
     color: #1e293b;
+    transform: translateY(-1px);
 }
 
 body.night-mode .btn-detail {
@@ -766,6 +768,43 @@ body.night-mode .btn-detail {
 body.night-mode .btn-detail:hover {
     background: #555;
     color: #fff;
+}
+
+/* Estilo premium para el botón de seleccionar archivo */
+input[type="file"] {
+    padding: 0.5rem !important;
+    cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 1.5rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 0.75rem;
+    font-family: inherit;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: linear-gradient(135deg, #2a5298, #1e3c72);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Modo oscuro para botón de seleccionar archivo */
+body.night-mode input[type="file"]::file-selector-button {
+    background: linear-gradient(135deg, #D4AF37, #C5A059);
+    color: #1A1A1A;
+}
+
+body.night-mode input[type="file"]::file-selector-button:hover {
+    box-shadow: 0 4px 8px rgba(212, 175, 55, 0.3);
 }
 
 /* ==========================================================================
@@ -785,7 +824,12 @@ body.night-mode .btn-detail:hover {
         display: none !important;
     }
 
-    body, .dashboard-layout, .main-content, .view-container {
+    body, 
+    body.night-mode, 
+    body.visual-protection,
+    .dashboard-layout, 
+    .main-content, 
+    .view-container {
         background: #ffffff !important;
         color: #000000 !important;
         box-shadow: none !important;
@@ -794,12 +838,34 @@ body.night-mode .btn-detail:hover {
         margin: 0 !important;
         width: 100% !important;
         display: block !important;
+        filter: none !important; /* Anular filtro de protección visual */
+    }
+
+    /* Forzar que todos los textos del reporte sean oscuros para su legibilidad física */
+    .report-header-right p,
+    .report-title-section h1,
+    .report-title-section p,
+    .report-table th,
+    .report-table td,
+    .report-summary-box h3,
+    .report-summary-value,
+    .signature-line p {
+        color: #000000 !important;
+    }
+
+    .text-danger {
+        color: #b91c1c !important; /* Rojo oscuro legible en papel */
+    }
+
+    .text-success {
+        color: #15803d !important; /* Verde oscuro legible en papel */
     }
 
     /* Estilos del reporte impreso */
     .view-reporte {
         display: block !important;
         width: 100% !important;
+        background: #ffffff !important;
     }
 
     .report-header {

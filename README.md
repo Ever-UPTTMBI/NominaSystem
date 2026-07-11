@@ -26,11 +26,13 @@ El sistema cuenta con un **dashboard con menú lateral**, vistas independientes 
 | Capa | Tecnología |
 |------|------------|
 | **Backend** | Node.js + Express |
+| **Multimedia / Carga** | `multer` (para procesamiento físico de imágenes en el disco) |
+| **Visualizaciones** | `Chart.js` (para gráficos interactivos adaptativos en tiempo real) |
 | **Frontend** | HTML5, CSS3, JavaScript (ES6 Modules) |
 | **Autenticación** | JWT con cookies HttpOnly |
-| **Persistencia** | Archivo JSON (`empleados.json`) |
+| **Persistencia** | Archivo JSON (`empleados.json`) + Carpetas físicas (`/uploads`) |
 | **Arquitectura** | 3 Capas (Presentación, Lógica de Negocio, Datos) + POO |
-| **Estilos** | CSS modular con modo oscuro/ claro y protección visual |
+| **Estilos** | CSS modular con modo oscuro/claro, protección visual y `@media print` |
 
 ---
 
@@ -44,28 +46,47 @@ El sistema cuenta con un **dashboard con menú lateral**, vistas independientes 
 
 ### 📊 Dashboard y Navegación
 - **Menú lateral fijo** con navegación entre vistas.
-- Vistas dinámicas: **Empleados**, **Formulario de Empleado** y **Estadísticas**.
-- Carga de vistas mediante `fetch` sin recargar la página.
-- **Diseño responsivo** que se adapta a móviles y tablets.
+- Vistas dinámicas: **Empleados**, **Formulario de Empleado**, **Estadísticas** y **Reporte de Nómina**.
+- Carga de vistas mediante `fetch` sin recargar la página SPA.
+- **Diseño responsivo** y moderno con degradados de calidad premium.
+
+### 📸 Gestión de Archivos Multimedia
+- **Subida de fotos de perfil:** Formulario de registro con carga de imagen procesada mediante `multer`.
+- **Ruta segura controlada:** Descarga/servido de fotos validado en backend para evitar accesos indebidos.
+- **Limpieza de disco automatizada:** Eliminación física de archivos huérfanos del servidor cuando un empleado es eliminado o su foto es modificada.
 
 ### 👥 Gestión de Empleados (CRUD)
-- ✅ Registrar nuevos empleados.
-- ✅ Listar empleados con búsqueda en tiempo real.
-- ✅ Editar empleados (nombre, cargo, sueldo).
-- ✅ **La cédula no puede modificarse después del registro**.
-- ✅ Eliminar empleados con confirmación.
+- ✅ Registrar nuevos empleados (con foto de perfil e historial de horas extras).
+- ✅ Listar empleados en una tabla responsiva con iniciales dinámicas (si no tiene foto) o miniatura circular de la imagen.
+- ✅ Editar empleados (nombre, cargo, sueldo base, horas extras). La cédula se mantiene bloqueada tras el registro.
+- ✅ Eliminar empleados con modal de confirmación y eliminación de foto en disco.
 
-### 📈 Estadísticas en Tiempo Real
-- 📊 Total de empleados registrados.
-- 💰 Gasto mensual total en nómina (sumatoria de sueldos).
-- Vista dedicada con tarjetas informativas.
+### 💵 Lógica de Negocio Avanzada (Nómina)
+- **Horas Extras:** Pago calculado según la fórmula: $\text{Sueldo Base} / 240 \times 1.5$ por cada hora.
+- **Bono de Alimentación Fijo:** Asignación constante de `500,00 Bs`.
+- **Retenciones de Ley:** Deducciones del `4%` por concepto de IVSS y `1%` por Paro Forzoso (L.P.F.).
+- **Sueldo Neto:** Suma automática de asignaciones y resta de deducciones.
+- **Recibo de Pago:** Modal interactivo con el desglose matemático detallado del cálculo.
+
+### 🧾 Reporte Imprimible Consolidado
+- Vista consolidada de nómina con sumatoria reactiva del total acumulado a pagar.
+- Configuración de estilos `@media print` para ocultar la barra lateral, botones interactivos y alertas.
+- Formato limpio, membretado y de alto contraste con líneas oficiales para firmas autorizadas, inmune al modo oscuro o filtros de protección visual.
+
+### 📈 Estadísticas y Gráficos Reactivos
+- **Tarjetas Resumen:** Muestra del total de la plantilla y el gasto neto de nómina global.
+- **Gráficos con Chart.js:** Cuatro dashboards gráficos interactivos:
+  1. *Distribución de Cargos* (Gráfico de Dona).
+  2. *Sueldos Netos por Empleado* (Gráfico de Barras).
+  3. *Ranking de Horas Extras por Empleado* (Gráfico de Barras Horizontal).
+  4. *Asignaciones vs. Deducciones Totales* (Gráfico de Barras Comparativas).
+- Sincronización automática de temas (colores claros/oscuros adaptativos para ticks y grillas del canvas).
 
 ### 🔍 Búsqueda Reactiva
-- Búsqueda por cédula o nombre.
-- Filtrado en tiempo real mientras el usuario escribe.
+- Búsqueda instantánea por cédula o nombre con filtrado dinámico en tiempo real.
 
 ### 💵 Moneda
-- **Bolívares (Bs)** con formato venezolano (ej. `1.250,00 Bs`).
+- Formato venezolano para todas las monedas y montos (`es-VE`, ej. `1.250,00 Bs`).
 
 ---
 
@@ -75,33 +96,35 @@ El sistema cuenta con un **dashboard con menú lateral**, vistas independientes 
 NominaSystem/
 ├── backend/
 │   ├── data/
-│   │   └── empleados.json       # Base de datos (se crea automáticamente)
+│   │   └── empleados.json       # Base de datos JSON
 │   ├── models/
-│   │   └── GestorArchivo.js     # Clase para manejo del archivo JSON
+│   │   └── GestorArchivo.js     # Manejo del archivo JSON y borrado de archivos del disco
 │   ├── routes/
-│   │   └── empleados.js         # Rutas de la API
-│   └── server.js                # Configuración del servidor Express
+│   │   └── empleados.js         # Endpoints de API y lógica de negocio/multer
+│   └── server.js                # Inicialización del servidor Express y JWT
+├── uploads/                     # Carpeta de almacenamiento físico de fotos de perfil
 ├── frontend/
 │   ├── css/
-│   │   ├── common.css           # Estilos base y utilidades
-│   │   ├── login.css            # Estilos específicos del login
-│   │   └── dashboard.css        # Layout y modos visuales
+│   │   ├── common.css           # Estilos base comunes y botones
+│   │   ├── login.css            # Estilos del portal de login premium
+│   │   └── dashboard.css        # Layout principal, modales, gráficos y reglas de impresión
 │   ├── js/
-│   │   ├── app.js               # Redirección según sesión
-│   │   ├── login.js             # Lógica del login (autenticación)
-│   │   ├── dashboard.js         # Navegación, modos, inicialización de vistas
-│   │   ├── UI.js                # Clase CRUD (adaptada a vistas dinámicas)
-│   │   ├── Empleado.js          # Modelo y validaciones
-│   │   └── api.js               # Comunicación con el backend
-│   ├── views/                   # Vistas HTML parciales
-│   │   ├── empleados.html       # Lista de empleados con buscador
-│   │   ├── empleado-form.html   # Formulario de registro/edición
-│   │   └── estadisticas.html    # Panel de estadísticas
-│   ├── index.html               # Punto de entrada (redirección)
-│   ├── login.html               # Página de login
-│   └── dashboard.html           # Dashboard con menú lateral
-├── package.json                 # Dependencias y scripts
-└── README.md                    # Documentación
+│   │   ├── app.js               # Enrutador e inicio de sesión
+│   │   ├── login.js             # Lógica del formulario de login
+│   │   ├── dashboard.js         # Carga de vistas parciales e inicialización de Chart.js
+│   │   ├── UI.js                # Renderizado de tabla, avatares y control de modales
+│   │   ├── Empleado.js          # Modelo y validaciones de datos
+│   │   └── api.js               # Conexiones con backend usando FormData
+│   ├── views/                   # Vistas dinámicas cargadas en el SPA
+│   │   ├── empleados.html       # Listado de empleados con buscadores
+│   │   ├── empleado-form.html   # Formulario con inputs de subida y horas extras
+│   │   ├── estadisticas.html    # Contenedores de gráficos interactivos
+│   │   └── reporte.html         # Vista oficial del reporte de nómina consolidado
+│   ├── index.html               # Redirección inicial
+│   ├── login.html               # Portal de acceso
+│   └── dashboard.html           # Estructura del dashboard y modales de confirmación/recibos
+├── package.json                 # Dependencias de npm y scripts
+└── README.md                    # Guía de documentación
 ```
 
 ---
@@ -146,13 +169,14 @@ http://localhost:3000
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| POST | `/api/login` | Iniciar sesión |
+| POST | `/api/login` | Iniciar sesión (Genera JWT HTTPOnly Cookie) |
 | GET | `/api/check-session` | Verificar sesión activa |
-| POST | `/api/logout` | Cerrar sesión |
-| GET | `/api/empleados` | Obtener todos los empleados |
-| POST | `/api/empleados` | Crear nuevo empleado |
-| PUT | `/api/empleados/:id` | Actualizar empleado (sin cédula) |
-| DELETE | `/api/empleados/:id` | Eliminar empleado |
+| POST | `/api/logout` | Cerrar sesión (Limpia Cookie) |
+| GET | `/api/empleados` | Obtener todos los empleados con desgloses de nómina |
+| POST | `/api/empleados` | Crear nuevo empleado (Carga de Foto con Multer) |
+| PUT | `/api/empleados/:id` | Actualizar empleado (sin cédula, limpia fotos antiguas) |
+| DELETE | `/api/empleados/:id` | Eliminar empleado (limpia fotos físicas del disco) |
+| GET | `/api/empleados/foto/:filename` | Servir foto de perfil de forma controlada y segura |
 
 ---
 
