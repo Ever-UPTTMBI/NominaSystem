@@ -1,0 +1,59 @@
+<div class="view-reporte">
+    <!-- Encabezado del reporte (Visible en impresión y pantalla) -->
+    <div class="report-header">
+        <div class="report-header-left">
+            <img src="/img/logo-blue.png" alt="Logo" class="report-logo">
+            <div class="report-title-section">
+                <h1>NominaSystem, S.A.</h1>
+                <p>Departamento de Recursos Humanos y Gestión de Personal</p>
+                <p>RIF: J-12345678-9</p>
+            </div>
+        </div>
+        <div class="report-header-right">
+            <p><strong>Fecha de Emisión:</strong> <span id="report-date">--/--/----</span></p>
+            <p><strong>Tipo de Documento:</strong> Resumen de Nómina Mensual</p>
+        </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;" class="no-print">
+        <h2>🧾 Reporte de Nómina Consolidado</h2>
+        <button id="btnImprimirReporte" class="btn btn-primary">🖨️ Imprimir Reporte</button>
+    </div>
+
+    <!-- Tabla de Reporte Completo -->
+    <div class="table-container">
+        <table class="report-table">
+            <thead>
+                <tr>
+                    <th>Empleado</th>
+                    <th>Cédula</th>
+                    <th>Cargo</th>
+                    <th class="text-right">Sueldo Base</th>
+                    <th class="text-right">H.E. Pago</th>
+                    <th class="text-right">Bono Fijo</th>
+                    <th class="text-right">Retenciones (5%)</th>
+                    <th class="text-right">Sueldo Neto</th>
+                </tr>
+            </thead>
+            <tbody id="reporteTablaBody">
+                <tr class="fila-vacia"><td colspan="8">Cargando reporte de nómina...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pie de Reporte / Totales y Firmas -->
+    <div class="report-footer">
+        <div class="report-signatures">
+            <div class="signature-line">
+                <p>Preparado por: RRHH</p>
+            </div>
+            <div class="signature-line">
+                <p>Aprobado por: Gerencia General</p>
+            </div>
+        </div>
+        <div class="report-summary-box">
+            <h3>Total Consolidado de Nómina:</h3>
+            <p class="report-summary-value" id="reporteTotalGeneral">0.00 Bs</p>
+        </div>
+    </div>
+</div>

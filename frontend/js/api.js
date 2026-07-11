@@ -22,11 +22,10 @@ export async function obtenerEmpleados() {
     return await resp.json();
 }
 
-export async function crearEmpleado(empleado) {
+export async function crearEmpleado(formData) {
     const resp = await fetch(API_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(empleado)
+        body: formData
     });
     await handleResponse(resp);
     if (!resp.ok) {
@@ -36,11 +35,10 @@ export async function crearEmpleado(empleado) {
     return await resp.json();
 }
 
-export async function actualizarEmpleado(id, empleado) {
+export async function actualizarEmpleado(id, formData) {
     const resp = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(empleado)
+        body: formData
     });
     await handleResponse(resp);
     if (!resp.ok) {

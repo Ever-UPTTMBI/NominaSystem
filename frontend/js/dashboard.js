@@ -44,6 +44,8 @@ async function cargarVista(nombre) {
             initEstadisticas(container);
         } else if (nombre === 'empleado-form') {
             initEmpleadoForm(container);
+        } else if (nombre === 'reporte') {
+            initReporte(container);
         }
     } catch (error) {
         container.innerHTML = `<p class="error-message">Error al cargar la vista: ${error.message}</p>`;
@@ -66,7 +68,7 @@ function initEstadisticas(container) {
     if (uiInstance && uiInstance.empleados) {
         const empleados = uiInstance.empleados;
         const total = empleados.length;
-        const suma = empleados.reduce((acc, e) => acc + (Number(e.sueldo) || 0), 0);
+        const suma = empleados.reduce((acc, e) => acc + (Number(e.sueldoNeto) || 0), 0);
         const totalSpan = container.querySelector('#totalEmpleados');
         const gastoSpan = container.querySelector('#gastoTotal');
         if (totalSpan) totalSpan.textContent = total;
@@ -74,7 +76,7 @@ function initEstadisticas(container) {
     } else {
         obtenerEmpleados().then(empleados => {
             const total = empleados.length;
-            const suma = empleados.reduce((acc, e) => acc + Number(e.sueldo), 0);
+            const suma = empleados.reduce((acc, e) => acc + (Number(e.sueldoNeto) || 0), 0);
             const totalSpan = container.querySelector('#totalEmpleados');
             const gastoSpan = container.querySelector('#gastoTotal');
             if (totalSpan) totalSpan.textContent = total;
@@ -89,74 +91,109 @@ function initEstadisticas(container) {
     }
 }
 
+function initReporte(container) {
+    const formatBs = (num) => {
+        return num.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' Bs';
+    };
+
+    // Establecer la fecha actual
+    const dateSpan = container.querySelector('#report-date');
+    if (dateSpan) {
+        const hoy = new Date();
+        dateSpan.textContent = hoy.toLocaleDateString('es-VE', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
+    const tBody = container.querySelector('#reporteTablaBody');
+    const totalGeneralSpan = container.querySelector('#reporteTotalGeneral');
+    const printBtn = container.querySelector('#btnImprimirReporte');
+
+    if (printBtn) {
+        printBtn.addEventListener('click', () => {
+            window.print();
+        });
+    }
+
+    const renderizarReporte = (empleados) => {
+        if (!tBody) return;
+        tBody.innerHTML = '';
+        
+        if (empleados.length === 0) {
+            tBody.innerHTML = '<tr><td colspan="8" class="text-center">No hay empleados registrados.</td></tr>';
+            if (totalGeneralSpan) totalGeneralSpan.textContent = '0.00 Bs';
+            return;
+        }
+
+        let totalAcumulado = 0;
+
+        empleados.forEach(emp => {
+            const tr = document.createElement('tr');
+            const retencionesSum = (emp.ivss || 0) + (emp.paroForzoso || 0);
+            totalAcumulado += emp.sueldoNeto || 0;
+
+            tr.innerHTML = `
+                <td><strong>${emp.nombre}</strong></td>
+                <td>${emp.cedula}</td>
+                <td>${emp.cargo}</td>
+                <td class="text-right">${formatBs(emp.sueldoBase)}</td>
+                <td class="text-right">${formatBs(emp.pagoHorasExtras)}</td>
+                <td class="text-right">${formatBs(emp.bonoFijo)}</td>
+                <td class="text-right text-danger">-${formatBs(retencionesSum)}</td>
+                <td class="text-right font-bold">${formatBs(emp.sueldoNeto)}</td>
+            `;
+            tBody.appendChild(tr);
+        });
+
+        if (totalGeneralSpan) {
+            totalGeneralSpan.textContent = formatBs(totalAcumulado);
+        }
+    };
+
+    if (uiInstance && uiInstance.empleados && uiInstance.empleados.length > 0) {
+        renderizarReporte(uiInstance.empleados);
+    } else {
+        obtenerEmpleados().then(empleados => {
+            renderizarReporte(empleados);
+            if (uiInstance) uiInstance.empleados = empleados;
+        }).catch(err => {
+            if (tBody) tBody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Error: ${err.message}</td></tr>`;
+        });
+    }
+}
+
 function initEmpleadoForm(container) {
     const empleado = window.empleadoEditando || null;
-    const form = container.querySelector('#empleadoForm');
-    const errorDiv = container.querySelector('#mensajeError');
-    const cancelBtn = container.querySelector('#btnCancelar');
 
-    if (empleado) {
-        const nombreInput = container.querySelector('#nombre');
-        const cedulaInput = container.querySelector('#cedula');
-        const cargoInput = container.querySelector('#cargo');
-        const sueldoInput = container.querySelector('#sueldo');
-        const idHidden = container.querySelector('#empleadoId');
-        const formTitle = container.querySelector('#formTitle');
-        const guardarBtn = container.querySelector('#btnGuardar');
+    if (uiInstance) {
+        uiInstance.container = container;
+        uiInstance.initElementosDOM();
+        uiInstance.registrarEventos();
 
-        if (nombreInput) nombreInput.value = empleado.nombre;
-        if (cedulaInput) {
-            cedulaInput.value = empleado.cedula;
-            cedulaInput.readOnly = true;
-            cedulaInput.style.backgroundColor = '#f1f5f9';
-            cedulaInput.style.color = '#64748b';
-            cedulaInput.style.cursor = 'not-allowed';
-        }
-        if (cargoInput) cargoInput.value = empleado.cargo;
-        if (sueldoInput) sueldoInput.value = empleado.sueldo;
-        if (idHidden) idHidden.value = empleado.id;
-        if (formTitle) formTitle.textContent = 'Editar Empleado';
-        if (guardarBtn) guardarBtn.textContent = 'Actualizar';
-        if (cancelBtn) cancelBtn.style.display = 'inline-block';
+        if (empleado) {
+            if (uiInstance.nombreInput) uiInstance.nombreInput.value = empleado.nombre;
+            if (uiInstance.cedulaInput) {
+                uiInstance.cedulaInput.value = empleado.cedula;
+                uiInstance.cedulaInput.readOnly = true;
+                uiInstance.cedulaInput.style.backgroundColor = '#f1f5f9';
+                uiInstance.cedulaInput.style.color = '#64748b';
+                uiInstance.cedulaInput.style.cursor = 'not-allowed';
+            }
+            if (uiInstance.cargoInput) uiInstance.cargoInput.value = empleado.cargo;
+            if (uiInstance.sueldoInput) uiInstance.sueldoInput.value = empleado.sueldoBase;
+            if (uiInstance.horasExtrasInput) uiInstance.horasExtrasInput.value = empleado.horasExtras;
+            if (uiInstance.empleadoIdHidden) uiInstance.empleadoIdHidden.value = empleado.id;
+            if (uiInstance.formTitle) uiInstance.formTitle.textContent = 'Editar Empleado';
+            if (uiInstance.btnGuardar) uiInstance.btnGuardar.textContent = 'Actualizar';
+            if (uiInstance.btnCancelar) uiInstance.btnCancelar.style.display = 'inline-block';
 
-        if (uiInstance) {
-            uiInstance.container = container;
-            uiInstance.form = form;
-            uiInstance.nombreInput = nombreInput;
-            uiInstance.cedulaInput = cedulaInput;
-            uiInstance.cargoInput = cargoInput;
-            uiInstance.sueldoInput = sueldoInput;
-            uiInstance.empleadoIdHidden = idHidden;
-            uiInstance.errorDiv = errorDiv;
-            uiInstance.formTitle = formTitle;
-            uiInstance.btnGuardar = guardarBtn;
-            uiInstance.btnCancelar = cancelBtn;
             uiInstance.modoEdicion = true;
             uiInstance.idEditando = empleado.id;
             uiInstance.limpiarError();
-            if (form) {
-                form.removeEventListener('submit', uiInstance.handleSubmit);
-                form.addEventListener('submit', uiInstance.handleSubmit.bind(uiInstance));
-            }
-            if (cancelBtn) {
-                cancelBtn.removeEventListener('click', uiInstance.cancelarEdicion);
-                cancelBtn.addEventListener('click', uiInstance.cancelarEdicion.bind(uiInstance));
-            }
-        }
-    } else {
-        if (uiInstance) {
-            uiInstance.container = container;
-            uiInstance.initElementosDOM();
-            uiInstance.registrarEventos();
+        } else {
             uiInstance.resetearFormulario();
-            if (form) {
-                form.removeEventListener('submit', uiInstance.handleSubmit);
-                form.addEventListener('submit', uiInstance.handleSubmit.bind(uiInstance));
-            }
-            if (cancelBtn) {
-                cancelBtn.removeEventListener('click', uiInstance.cancelarEdicion);
-                cancelBtn.addEventListener('click', uiInstance.cancelarEdicion.bind(uiInstance));
-            }
         }
     }
 }

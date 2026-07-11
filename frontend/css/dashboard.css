@@ -540,3 +540,374 @@ body.visual-protection input {
         margin-top: 0;
     }
 }
+
+/* ==========================================================================
+   MINIATURA DEL EMPLEADO Y AVATAR PLACEHOLDER
+   ========================================================================== */
+.employee-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.employee-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.night-mode .employee-thumb {
+    border-color: #4A4A4A;
+}
+
+.employee-avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body.night-mode .employee-avatar-placeholder {
+    background: linear-gradient(135deg, #D4AF37, #9A7B1C);
+    color: #1A1A1A;
+}
+
+/* ==========================================================================
+   MODAL DETALLE - ESTILOS DE RECIBO
+   ========================================================================== */
+.receipt-box {
+    max-width: 500px !important;
+}
+
+.receipt-header {
+    margin-bottom: 1.5rem;
+    border-bottom: 2px dashed #cbd5e1;
+    padding-bottom: 1rem;
+    text-align: left;
+}
+
+body.night-mode .receipt-header {
+    border-bottom-color: #475569;
+}
+
+.receipt-header h3 {
+    margin: 0;
+    font-size: 1.35rem;
+    color: #1e3c72;
+}
+
+body.night-mode .receipt-header h3 {
+    color: #D4AF37;
+}
+
+.receipt-header p {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.receipt-profile {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.receipt-avatar {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #3b82f6;
+}
+
+body.night-mode .receipt-avatar {
+    border-color: #D4AF37;
+}
+
+.receipt-avatar-placeholder {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+body.night-mode .receipt-avatar-placeholder {
+    background: linear-gradient(135deg, #D4AF37, #9A7B1C);
+    color: #1A1A1A;
+}
+
+.receipt-info h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.2rem;
+}
+
+.receipt-info p {
+    margin: 0.2rem 0;
+    font-size: 0.85rem !important;
+    color: var(--text-muted, #64748b);
+}
+
+body.night-mode .receipt-info p {
+    color: #94a3b8;
+}
+
+.receipt-divider {
+    border-top: 1px solid #e2e8f0;
+    margin: 1rem 0;
+}
+
+body.night-mode .receipt-divider {
+    border-top-color: #334155;
+}
+
+.receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+}
+
+.receipt-table th {
+    padding: 8px;
+    border-bottom: 2px solid #cbd5e1;
+    font-weight: 600;
+    color: #475569 !important;
+    background: transparent !important;
+    text-align: left;
+}
+
+body.night-mode .receipt-table th {
+    border-bottom-color: #475569;
+    color: #cbd5e1 !important;
+}
+
+.receipt-table td {
+    padding: 8px;
+    border-bottom: 1px solid #f1f5f9;
+    text-align: left;
+}
+
+body.night-mode .receipt-table td {
+    border-bottom-color: #334155;
+}
+
+.receipt-total-row th,
+.receipt-total-row td {
+    border-top: 2px solid #94a3b8;
+    border-bottom: none;
+    font-size: 1rem;
+    font-weight: 700;
+    padding-top: 12px;
+}
+
+body.night-mode .receipt-total-row th,
+body.night-mode .receipt-total-row td {
+    border-top-color: #D4AF37;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.text-danger {
+    color: #ef4444;
+}
+
+.text-success {
+    color: #10b981;
+}
+
+body.night-mode .text-success {
+    color: #34d399;
+}
+
+/* Botones de acción en tabla */
+.btn-detail {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-detail:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+body.night-mode .btn-detail {
+    background: #4A4A4A;
+    border-color: #555;
+    color: #E0E0E0;
+}
+
+body.night-mode .btn-detail:hover {
+    background: #555;
+    color: #fff;
+}
+
+/* ==========================================================================
+   ESTILOS DE IMPRESIÓN
+   ========================================================================== */
+@media print {
+    /* Ocultar barra lateral y controles interactivos */
+    .sidebar,
+    #toast-container,
+    .modal-overlay,
+    .search-container,
+    .form-actions,
+    .btn,
+    button,
+    header,
+    nav {
+        display: none !important;
+    }
+
+    body, .dashboard-layout, .main-content, .view-container {
+        background: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        display: block !important;
+    }
+
+    /* Estilos del reporte impreso */
+    .view-reporte {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .report-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        border-bottom: 2px solid #000000 !important;
+        padding-bottom: 1.5rem !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .report-header-left {
+        display: flex !important;
+        align-items: center !important;
+        gap: 1.5rem !important;
+    }
+
+    .report-logo {
+        height: 60px !important;
+        width: auto !important;
+    }
+
+    .report-title-section h1 {
+        margin: 0 !important;
+        font-size: 1.6rem !important;
+        color: #000000 !important;
+    }
+
+    .report-title-section p {
+        margin: 0.25rem 0 0 0 !important;
+        color: #555555 !important;
+        font-size: 0.85rem !important;
+    }
+
+    .report-header-right {
+        text-align: right !important;
+        font-size: 0.9rem !important;
+        color: #555555 !important;
+    }
+
+    .report-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin-top: 1.5rem !important;
+    }
+
+    .report-table th, 
+    .report-table td {
+        border: 1px solid #000000 !important;
+        padding: 8px 12px !important;
+        font-size: 0.9rem !important;
+        color: #000000 !important;
+        text-align: left !important;
+    }
+
+    .report-table th {
+        background-color: #f1f5f9 !important;
+        font-weight: 700 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .report-table td.text-right,
+    .report-table th.text-right {
+        text-align: right !important;
+    }
+
+    .report-footer {
+        margin-top: 3rem !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+    }
+
+    .report-summary-box {
+        border: 2px solid #000000 !important;
+        padding: 1rem !important;
+        min-width: 250px !important;
+        background-color: #f8fafc !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .report-summary-box h3 {
+        margin: 0 0 0.5rem 0 !important;
+        font-size: 0.95rem !important;
+        color: #000000 !important;
+    }
+
+    .report-summary-value {
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+        color: #000000 !important;
+        margin: 0 !important;
+    }
+
+    .report-signatures {
+        display: flex !important;
+        gap: 4rem !important;
+        margin-top: 4rem !important;
+    }
+
+    .signature-line {
+        border-top: 1px solid #000000 !important;
+        width: 180px !important;
+        text-align: center !important;
+        font-size: 0.8rem !important;
+        padding-top: 0.5rem !important;
+        color: #333333 !important;
+    }
+}

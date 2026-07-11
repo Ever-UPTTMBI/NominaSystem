@@ -61,6 +61,20 @@ class GestorArchivo {
         const empleados = await this.leerEmpleados();
         const index = empleados.findIndex(emp => emp.id === id);
         if (index === -1) return null;
+
+        const empleadoViejo = empleados[index];
+        // Si hay una foto nueva y ya existía una foto vieja, eliminar la vieja
+        if (datosActualizados.foto && empleadoViejo.foto && empleadoViejo.foto !== datosActualizados.foto) {
+            const fsPromises = require('fs').promises;
+            const path = require('path');
+            const fotoViejaPath = path.join(__dirname, '../../uploads', empleadoViejo.foto);
+            try {
+                await fsPromises.unlink(fotoViejaPath);
+            } catch (err) {
+                console.error(`No se pudo eliminar la foto anterior: ${empleadoViejo.foto}`, err.message);
+            }
+        }
+
         const empleadoActualizado = { ...empleados[index], ...datosActualizados, id: empleados[index].id };
         empleados[index] = empleadoActualizado;
         await this.escribirEmpleados(empleados);
@@ -71,6 +85,20 @@ class GestorArchivo {
         const empleados = await this.leerEmpleados();
         const index = empleados.findIndex(emp => emp.id === id);
         if (index === -1) return false;
+
+        const empleado = empleados[index];
+        // Eliminar foto físicamente si existe
+        if (empleado.foto) {
+            const fsPromises = require('fs').promises;
+            const path = require('path');
+            const fotoPath = path.join(__dirname, '../../uploads', empleado.foto);
+            try {
+                await fsPromises.unlink(fotoPath);
+            } catch (err) {
+                console.error(`No se pudo eliminar la foto de perfil: ${empleado.foto}`, err.message);
+            }
+        }
+
         empleados.splice(index, 1);
         await this.escribirEmpleados(empleados);
         return true;

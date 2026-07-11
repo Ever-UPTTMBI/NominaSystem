@@ -1,23 +1,20 @@
 [
   {
-    "id": "1781931226615-ju5ai",
-    "nombre": "Camila Castro",
-    "cedula": "V-1233212",
+    "id": "1783799137806-2nqfh",
+    "nombre": "Claudia Montilla",
+    "cedula": "V-26626262",
     "cargo": "Dev",
-    "sueldo": 15000
+    "sueldoBase": 1000,
+    "horasExtras": 5,
+    "foto": "foto-1783799137802-829544323.jpeg"
   },
   {
-    "id": "1781931716751-1poit",
+    "id": "1783799272502-w03ez",
     "nombre": "Sebastian Briceño",
     "cedula": "V-32117825",
-    "cargo": "Developer Full-Stack",
-    "sueldo": 35000
-  },
-  {
-    "id": "1781932348184-txfdi",
-    "nombre": "Claudia Montilla",
-    "cedula": "V-33711805",
-    "cargo": "Designer Web",
-    "sueldo": 28000
+    "cargo": "Dev",
+    "sueldoBase": 18000,
+    "horasExtras": 19,
+    "foto": "foto-1783799272499-315730403.jpg"
   }
 ]

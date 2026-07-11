@@ -9,6 +9,13 @@ export default class UI {
         this.idEditando = null;
         this.procesandoFormulario = false; // Bandera para evitar el doble disparo síncrono
 
+        // Enlazar métodos para evitar duplicación de event listeners
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.cancelarEdicion = this.cancelarEdicion.bind(this);
+        this.handleAgregarEmpleado = this.handleAgregarEmpleado.bind(this);
+        this.handleBuscadorInput = this.handleBuscadorInput.bind(this);
+        this.handleTablaBodyClick = this.handleTablaBodyClick.bind(this);
+
         this.initElementosDOM();
         this.registrarEventos();
         this.cargarEmpleados();
@@ -25,6 +32,8 @@ export default class UI {
         this.cedulaInput = this.container.querySelector('#cedula');
         this.cargoInput = this.container.querySelector('#cargo');
         this.sueldoInput = this.container.querySelector('#sueldo');
+        this.horasExtrasInput = this.container.querySelector('#horasExtras');
+        this.fotoInput = this.container.querySelector('#foto');
         this.errorDiv = this.container.querySelector('#mensajeError');
         this.formTitle = this.container.querySelector('#formTitle');
         this.btnGuardar = this.container.querySelector('#btnGuardar');
@@ -36,45 +45,78 @@ export default class UI {
         this.confirmModalMsg = document.getElementById('confirm-modal-msg');
         this.btnModalCancelar = document.getElementById('btn-modal-cancelar');
         this.btnModalConfirmar = document.getElementById('btn-modal-confirmar');
+
+        // Modal Detalle
+        this.detalleModal = document.getElementById('detalle-modal');
+        this.detalleModalBody = document.getElementById('detalle-modal-body');
+        this.btnDetalleCerrar = document.getElementById('btn-detalle-cerrar');
+    }
+
+    handleAgregarEmpleado() {
+        window.empleadoEditando = null;
+        window.cargarVista('empleado-form');
+    }
+
+    handleBuscadorInput() {
+        this.filtrarEmpleados();
+    }
+
+    async handleTablaBodyClick(e) {
+        const btnDetail = e.target.closest('.btn-detalle');
+        const btnEdit = e.target.closest('.btn-editar');
+        const btnDelete = e.target.closest('.btn-eliminar');
+
+        if (btnDetail) {
+            const id = btnDetail.getAttribute('data-id');
+            this.mostrarDetalle(id);
+        }
+
+        if (btnEdit) {
+            const id = btnEdit.getAttribute('data-id');
+            this.prepararEdicion(id);
+        }
+
+        if (btnDelete) {
+            const id = btnDelete.getAttribute('data-id');
+            await this.manejarEliminacion(id);
+        }
     }
 
     registrarEventos() {
         if (this.btnAgregarEmpleado) {
-            this.btnAgregarEmpleado.addEventListener('click', () => {
-                window.empleadoEditando = null;
-                window.cargarVista('empleado-form');
-            });
+            this.btnAgregarEmpleado.removeEventListener('click', this.handleAgregarEmpleado);
+            this.btnAgregarEmpleado.addEventListener('click', this.handleAgregarEmpleado);
         }
 
         if (this.buscador) {
-            this.buscador.addEventListener('input', () => this.filtrarEmpleados());
+            this.buscador.removeEventListener('input', this.handleBuscadorInput);
+            this.buscador.addEventListener('input', this.handleBuscadorInput);
         }
 
         if (this.form) {
-            // Remover cualquier listener previo por si la vista se recargó de forma incorrecta
-            this.form.removeEventListener('submit', this.handleSubmit.bind(this));
-            this.form.addEventListener('submit', this.handleSubmit.bind(this));
+            this.form.removeEventListener('submit', this.handleSubmit);
+            this.form.addEventListener('submit', this.handleSubmit);
         }
 
         if (this.btnCancelar) {
-            this.btnCancelar.addEventListener('click', this.cancelarEdicion.bind(this));
+            this.btnCancelar.removeEventListener('click', this.cancelarEdicion);
+            this.btnCancelar.addEventListener('click', this.cancelarEdicion);
         }
 
         if (this.tablaBody) {
-            this.tablaBody.addEventListener('click', async (e) => {
-                const btnEdit = e.target.closest('.btn-editar');
-                const btnDelete = e.target.closest('.btn-eliminar');
+            this.tablaBody.removeEventListener('click', this.handleTablaBodyClick);
+            this.tablaBody.addEventListener('click', this.handleTablaBodyClick);
+        }
 
-                if (btnEdit) {
-                    const id = btnEdit.getAttribute('data-id');
-                    this.prepararEdicion(id);
-                }
+        if (this.btnDetalleCerrar && this.detalleModal) {
+            this.btnDetalleCerrar.removeEventListener('click', this.cerrarDetalle.bind(this));
+            this.btnDetalleCerrar.addEventListener('click', this.cerrarDetalle.bind(this));
+        }
+    }
 
-                if (btnDelete) {
-                    const id = btnDelete.getAttribute('data-id');
-                    await this.manejarEliminacion(id);
-                }
-            });
+    cerrarDetalle() {
+        if (this.detalleModal) {
+            this.detalleModal.classList.remove('activo');
         }
     }
 
@@ -106,14 +148,14 @@ export default class UI {
             this.confirmModalMsg.textContent = mensaje;
             this.confirmModal.classList.add('activo');
 
+            const alConfirmar = () => { limpiarEventos(); resolve(true); };
+            const alCancelar = () => { limpiarEventos(); resolve(false); };
+
             const limpiarEventos = () => {
                 this.btnModalConfirmar.removeEventListener('click', alConfirmar);
                 this.btnModalCancelar.removeEventListener('click', alCancelar);
                 this.confirmModal.classList.remove('activo');
             };
-
-            const alConfirmar = () => { limpiarEventos(); resolve(true); };
-            const alCancelar = () => { limpiarEventos(); resolve(false); };
 
             this.btnModalConfirmar.addEventListener('click', alConfirmar);
             this.btnModalCancelar.addEventListener('click', alCancelar);
@@ -140,16 +182,31 @@ export default class UI {
             return;
         }
 
+        const getInitials = (nombre) => {
+            const parts = nombre.trim().split(/\s+/);
+            if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+            return parts[0] ? parts[0][0].toUpperCase() : '?';
+        };
+
         lista.forEach(emp => {
             const tr = document.createElement('tr');
-            const sueldoNum = Number(emp.sueldo) || 0; 
+            const sueldoNetoNum = Number(emp.sueldoNeto) || 0; 
             
             tr.innerHTML = `
-                <td><strong>${emp.nombre}</strong></td>
+                <td>
+                    <div class="employee-cell">
+                        ${emp.foto 
+                            ? `<img src="/api/empleados/foto/${emp.foto}" class="employee-thumb" alt="Foto">` 
+                            : `<div class="employee-avatar-placeholder">${getInitials(emp.nombre)}</div>`
+                        }
+                        <span class="employee-name">${emp.nombre}</span>
+                    </div>
+                </td>
                 <td>${emp.cedula}</td>
                 <td>${emp.cargo}</td>
-                <td>${sueldoNum.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs</td>
+                <td>${sueldoNetoNum.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs</td>
                 <td>
+                    <button class="btn-detail btn-detalle" data-id="${emp.id}">👁️ Detalle</button>
                     <button class="btn-edit btn-editar" data-id="${emp.id}">✏️ Editar</button>
                     <button class="btn-delete btn-eliminar" data-id="${emp.id}">🗑️ Eliminar</button>
                 </td>
@@ -204,40 +261,111 @@ export default class UI {
         }
     }
 
+    mostrarDetalle(id) {
+        const emp = this.empleados.find(e => e.id === id);
+        if (!emp) return;
+
+        const getInitials = (nombre) => {
+            const parts = nombre.trim().split(/\s+/);
+            if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+            return parts[0] ? parts[0][0].toUpperCase() : '?';
+        };
+
+        const formatBs = (num) => {
+            return num.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' Bs';
+        };
+
+        if (this.detalleModalBody) {
+            this.detalleModalBody.innerHTML = `
+                <div class="receipt-profile">
+                    ${emp.foto 
+                        ? `<img src="/api/empleados/foto/${emp.foto}" class="receipt-avatar" alt="Foto">` 
+                        : `<div class="receipt-avatar-placeholder">${getInitials(emp.nombre)}</div>`
+                    }
+                    <div class="receipt-info">
+                        <h4>${emp.nombre}</h4>
+                        <p><strong>Cédula:</strong> ${emp.cedula}</p>
+                        <p><strong>Cargo:</strong> ${emp.cargo}</p>
+                    </div>
+                </div>
+                
+                <div class="receipt-divider"></div>
+                
+                <table class="receipt-table">
+                    <thead>
+                        <tr>
+                            <th>Concepto / Descripción</th>
+                            <th class="text-right">Asignaciones (+)</th>
+                            <th class="text-right">Deducciones (-)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sueldo Base Mensual</td>
+                            <td class="text-right">${formatBs(emp.sueldoBase)}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Horas Extras (${emp.horasExtras}h × ${formatBs(emp.valorHoraExtra)}/h)</td>
+                            <td class="text-right">${formatBs(emp.pagoHorasExtras)}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Bono Fijo de Alimentación/Asistencia</td>
+                            <td class="text-right">${formatBs(emp.bonoFijo)}</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Retención de Ley IVSS (4%)</td>
+                            <td></td>
+                            <td class="text-right text-danger">-${formatBs(emp.ivss)}</td>
+                        </tr>
+                        <tr>
+                            <td>Retención de Ley Paro Forzoso (1%)</td>
+                            <td></td>
+                            <td class="text-right text-danger">-${formatBs(emp.paroForzoso)}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="receipt-total-row">
+                            <th>Sueldo Neto a Pagar</th>
+                            <th colspan="2" class="text-right text-success">${formatBs(emp.sueldoNeto)}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            `;
+        }
+        
+        if (this.detalleModal) {
+            this.detalleModal.classList.add('activo');
+        }
+    }
+
     async handleSubmit(event) {
         event.preventDefault();
         
-        // CONTROL CRÍTICO: Si ya se está procesando una petición, frenamos el doble envío
         if (this.procesandoFormulario) return;
 
         this.limpiarError();
 
-        let datos = {};
-        if (this.modoEdicion) {
-            datos = {
-                nombre: this.nombreInput.value.trim(),
-                cargo: this.cargoInput.value.trim(),
-                sueldo: parseFloat(this.sueldoInput.value)
-            };
-        } else {
-            datos = {
-                nombre: this.nombreInput.value.trim(),
-                cedula: this.cedulaInput.value.trim(),
-                cargo: this.cargoInput.value.trim(),
-                sueldo: parseFloat(this.sueldoInput.value)
-            };
-        }
+        const nombre = this.nombreInput.value.trim();
+        const cargo = this.cargoInput.value.trim();
+        const sueldoBase = parseFloat(this.sueldoInput.value);
+        const horasExtras = parseInt(this.horasExtrasInput.value || 0, 10);
+        const cedula = this.modoEdicion ? '' : this.cedulaInput.value.trim();
 
         let errores = [];
-        const errorNombre = Empleado.validarNombre(datos.nombre);
+        const errorNombre = Empleado.validarNombre(nombre);
         if (errorNombre) errores.push(errorNombre);
-        const errorSueldo = Empleado.validarSueldo(datos.sueldo);
+        const errorSueldo = Empleado.validarSueldo(sueldoBase);
         if (errorSueldo) errores.push(errorSueldo);
-        const errorCargo = Empleado.validarCargo(datos.cargo);
+        const errorHoras = Empleado.validarHorasExtras(horasExtras);
+        if (errorHoras) errores.push(errorHoras);
+        const errorCargo = Empleado.validarCargo(cargo);
         if (errorCargo) errores.push(errorCargo);
         
         if (!this.modoEdicion) {
-            const errorCedula = Empleado.validarCedula(datos.cedula);
+            const errorCedula = Empleado.validarCedula(cedula);
             if (errorCedula) errores.push(errorCedula);
         }
 
@@ -247,20 +375,34 @@ export default class UI {
             return;
         }
 
+        // Compilar FormData
+        const formData = new FormData();
+        formData.append('nombre', nombre);
+        formData.append('cargo', cargo);
+        formData.append('sueldoBase', sueldoBase);
+        formData.append('horasExtras', horasExtras);
+        
+        if (!this.modoEdicion) {
+            formData.append('cedula', cedula);
+        }
+
+        if (this.fotoInput && this.fotoInput.files.length > 0) {
+            formData.append('foto', this.fotoInput.files[0]);
+        }
+
         try {
-            // On bandera de procesamiento y bloq botón
             this.procesandoFormulario = true;
             if (this.btnGuardar) this.btnGuardar.disabled = true;
 
             if (this.modoEdicion && this.idEditando) {
-                const empleadoEditado = await actualizarEmpleado(this.idEditando, datos);
+                const empleadoEditado = await actualizarEmpleado(this.idEditando, formData);
                 const index = this.empleados.findIndex(emp => emp.id === this.idEditando);
                 if (index !== -1) {
                     this.empleados[index] = empleadoEditado;
                 }
                 this.lanzarToast('Empleado actualizado correctamente', 'exito');
             } else {
-                const nuevoEmpleado = await crearEmpleado(datos);
+                const nuevoEmpleado = await crearEmpleado(formData);
                 this.empleados.push(nuevoEmpleado);
                 this.lanzarToast('Empleado registrado correctamente', 'exito');
             }
@@ -271,7 +413,6 @@ export default class UI {
             this.mostrarError(error.message);
             this.lanzarToast(error.message, 'error');
         } finally {
-            // Unblock formulario una vez termine de responder el backend
             this.procesandoFormulario = false;
             if (this.btnGuardar) this.btnGuardar.disabled = false;
         }
@@ -292,6 +433,9 @@ export default class UI {
             this.cedulaInput.style.backgroundColor = '';
             this.cedulaInput.style.color = '';
             this.cedulaInput.style.cursor = '';
+        }
+        if (this.horasExtrasInput) {
+            this.horasExtrasInput.value = 0;
         }
         if (this.formTitle) this.formTitle.textContent = 'Registrar Empleado';
         if (this.btnGuardar) this.btnGuardar.textContent = 'Guardar';

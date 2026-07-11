@@ -23,6 +23,21 @@
     </div>
 </div>
 
+<div id="detalle-modal" class="modal-overlay">
+    <div class="modal-box receipt-box">
+        <div class="receipt-header">
+            <h3>Recibo de Nómina Detallado</h3>
+            <p>Resumen de Cálculo de Sueldo Neto</p>
+        </div>
+        <div class="receipt-body" id="detalle-modal-body">
+            <!-- El desglose se cargará dinámicamente -->
+        </div>
+        <div class="modal-botones">
+            <button id="btn-detalle-cerrar" class="modal-btn modal-btn-cancelar">Cerrar Recibo</button>
+        </div>
+    </div>
+</div>
+
     <div class="dashboard-layout">
         <!-- Menú lateral -->
         <aside class="sidebar">
@@ -37,6 +52,7 @@
             <nav class="sidebar-nav">
                 <button class="nav-btn" data-view="estadisticas">📊 Estadísticas</button>
                 <button class="nav-btn active" data-view="empleados">👥 Empleados</button>
+                <button class="nav-btn" data-view="reporte">🧾 Reporte de Nómina</button>
             </nav>
             <div class="sidebar-footer">
                 <button id="nightModeBtn" class="control-btn" title="Modo nocturno">🌙</button>
