@@ -12,15 +12,6 @@ El sistema cuenta con un **dashboard con menú lateral**, vistas independientes 
 
 ---
 
-## 👥 Desarrolladores
-
-**Equipo 2**
-- 👨‍💻 Sebastian Briceño  C.I: 32117825
-- 👩‍💻 Claudia Montilla   C.I: 33711807
-- 👨‍💻 Roberth Idrobo     C.I: 32746248
-
----
-
 ## 🛠️ Tecnologías utilizadas
 
 | Capa | Tecnología |
