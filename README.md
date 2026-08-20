@@ -130,14 +130,14 @@ git clone https://github.com/sbi447/NominaSystem.git
 cd NominaSystem
 
 # 3. Instalar dependencias
-npm install
+pnpm install
 
 # 4. Modificar .env.example a .env
 
 # 5. Ejecutar el servidor
-npm run dev      # Modo desarrollo (con nodemon)
+pnpm run dev      # Modo desarrollo (con nodemon)
 # o
-npm start        # Modo producción
+pnpm start        # Modo producción
 ```
 
 ### Acceso a la aplicación
