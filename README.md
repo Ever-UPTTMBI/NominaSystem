@@ -1,3 +1,6 @@
+![NominaSystem](./icon.jpg)
+
+
 # 📊 NominaSystem
 
 **Sistema de Gestión de Nómina** — Proyecto de Programación II-V

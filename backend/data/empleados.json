@@ -15,7 +15,7 @@
     "cargo": "Dev",
     "sueldoBase": 18000,
     "horasExtras": 19,
-    "foto": "foto-1783801489265-325175748.jpg"
+    "foto": "foto-1788912023744-901208485.jpg"
   },
   {
     "id": "1783802514291-z5e7o",
@@ -25,5 +25,14 @@
     "sueldoBase": 1000,
     "horasExtras": 999,
     "foto": "foto-1783802514282-908495399.jpg"
+  },
+  {
+    "id": "1787276836799-pj4ty",
+    "nombre": "Yoalice Muñoz",
+    "cedula": "V-122122112",
+    "cargo": "Manager",
+    "sueldoBase": 156000,
+    "horasExtras": 30,
+    "foto": null
   }
 ]
