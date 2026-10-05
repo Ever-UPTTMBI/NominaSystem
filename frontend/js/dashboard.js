@@ -162,7 +162,7 @@ function renderizarGraficos(empleados, container) {
     // 2. Datos para sueldos netos (Comparación)
     const labelsSueldos = empleados.map(emp => {
         const primerNombre = emp.nombre.split(' ')[0];
-        const lastDigits = emp.cedula.includes('-') ? emp.cedula.split('-')[1].substring(0, 4) : emp.id.substring(0, 4);
+        const lastDigits = emp.cedula.includes('-') ? emp.cedula.split('-')[1].substring(0, 4) : emp.cedula.substring(0, 4);
         return `${primerNombre} (${lastDigits}...)`;
     });
     const dataSueldos = empleados.map(emp => emp.sueldoNeto || 0);
@@ -207,7 +207,7 @@ function renderizarGraficos(empleados, container) {
     const empleadosOrdenadosHE = [...empleados].sort((a, b) => (b.horasExtras || 0) - (a.horasExtras || 0));
     const labelsHE = empleadosOrdenadosHE.map(emp => {
         const primerNombre = emp.nombre.split(' ')[0];
-        const lastDigits = emp.cedula.includes('-') ? emp.cedula.split('-')[1].substring(0, 4) : emp.id.substring(0, 4);
+        const lastDigits = emp.cedula.includes('-') ? emp.cedula.split('-')[1].substring(0, 4) : emp.cedula.substring(0, 4);
         return `${primerNombre} (${lastDigits})`;
     });
     const dataHE = empleadosOrdenadosHE.map(emp => emp.horasExtras || 0);
@@ -396,13 +396,13 @@ function initEmpleadoForm(container) {
             if (uiInstance.cargoInput) uiInstance.cargoInput.value = empleado.cargo;
             if (uiInstance.sueldoInput) uiInstance.sueldoInput.value = empleado.sueldoBase;
             if (uiInstance.horasExtrasInput) uiInstance.horasExtrasInput.value = empleado.horasExtras;
-            if (uiInstance.empleadoIdHidden) uiInstance.empleadoIdHidden.value = empleado.id;
+            if (uiInstance.empleadoIdHidden) uiInstance.empleadoIdHidden.value = empleado.cedula;
             if (uiInstance.formTitle) uiInstance.formTitle.textContent = 'Editar Empleado';
             if (uiInstance.btnGuardar) uiInstance.btnGuardar.textContent = 'Actualizar';
             if (uiInstance.btnCancelar) uiInstance.btnCancelar.style.display = 'inline-block';
 
             uiInstance.modoEdicion = true;
-            uiInstance.idEditando = empleado.id;
+            uiInstance.cedulaEditando = empleado.cedula;
             uiInstance.limpiarError();
         } else {
             uiInstance.resetearFormulario();

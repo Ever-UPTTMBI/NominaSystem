@@ -4,26 +4,30 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const empleadosRouter = require('./routes/empleados');
-
-const app = express();
+const connect = require('./db.js');
+const bcrypt = require('bcryptjs');
+const app = express(); 
 const PORT = process.env.PORT || 3000;
 
 // Secreto para firmar los JWT (en producción usar variable de entorno)
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecreto123';
 
 // Middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
-
+app.use((req, res, next) => {
+    req.db = connect
+    next()
+})
 // Middleware para verificar JWT
 const verificarToken = (req, res, next) => {
     const token = req.cookies.auth_token;
-    
+
     if (!token) {
         return res.status(401).json({ error: 'No autorizado' });
     }
-    
+
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
         req.user = decoded;
@@ -35,36 +39,39 @@ const verificarToken = (req, res, next) => {
 };
 
 // Ruta de login (genera el JWT)
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const validEmail = 'sysnom@gmail.com';
-        const validPassword = 'linux123';
+        const usuariosTabla = req.db.tabla('usuarios')
+        let result = await usuariosTabla.selectOne({ where: { user: email } })
+        if (result) {
+            if (await bcrypt.compare(password, result.hash)) {
+                // Crear token con datos del usuario (expira en 24 horas)
+                const token = jwt.sign(
+                    { email: email, loginTime: Date.now() },
+                    JWT_SECRET,
+                    { expiresIn: '24h' }
+                );
 
-        console.log('Intento de login:', email);
+                // Enviar token como cookie HTTP-only (segura)
+                res.cookie('auth_token', token, {
+                    httpOnly: true,      // No accesible desde JavaScript
+                    secure: false,       // true si usas HTTPS
+                    maxAge: 24 * 60 * 60 * 1000, // 24 horas
+                    sameSite: 'lax'
+                });
 
-        if (email === validEmail && password === validPassword) {
-            // Crear token con datos del usuario (expira en 24 horas)
-            const token = jwt.sign(
-                { email: validEmail, loginTime: Date.now() },
-                JWT_SECRET,
-                { expiresIn: '24h' }
-            );
-            
-            // Enviar token como cookie HTTP-only (segura)
-            res.cookie('auth_token', token, {
-                httpOnly: true,      // No accesible desde JavaScript
-                secure: false,       // true si usas HTTPS
-                maxAge: 24 * 60 * 60 * 1000, // 24 horas
-                sameSite: 'lax'
-            });
-            
-            console.log('✅ Login exitoso para:', email);
-            res.json({ success: true, message: 'Login exitoso' });
+                console.log('✅ Login exitoso para:', email);
+                res.json({ success: true, message: 'Login exitoso' });
+            } else {
+                console.log('❌ Login fallido para:', email);
+                res.status(401).json({ success: false, message: 'Credenciales inválidas' });
+            }
         } else {
             console.log('❌ Login fallido para:', email);
             res.status(401).json({ success: false, message: 'Credenciales inválidas' });
         }
+
     } catch (error) {
         console.error('Error en login:', error);
         res.status(500).json({ success: false, message: 'Error interno' });
@@ -74,11 +81,11 @@ app.post('/api/login', (req, res) => {
 // Ruta para verificar sesión (lee la cookie)
 app.get('/api/check-session', (req, res) => {
     const token = req.cookies.auth_token;
-    
+
     if (!token) {
         return res.json({ loggedIn: false });
     }
-    
+
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
         res.json({ loggedIn: true, user: { email: decoded.email } });

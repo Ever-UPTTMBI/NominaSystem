@@ -1,7 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-class GestorArchivo {
+class GestorArchivo { 
     constructor() {
         this.rutaArchivo = path.join(__dirname, '../data/empleados.json');
         this.inicializarArchivo();

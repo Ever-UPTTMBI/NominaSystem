@@ -3,8 +3,6 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const GestorArchivo = require('../models/GestorArchivo');
-const gestor = new GestorArchivo();
 
 // Salario mínimo en Bolívares y constantes de cálculo
 const SALARIO_MINIMO = 1000;
@@ -56,16 +54,16 @@ const uploadSingle = (req, res, next) => {
 function calcularDetalleNomina(emp) {
     const sueldoBase = Number(emp.sueldoBase) || 0;
     const horasExtras = Number(emp.horasExtras) || 0;
-    
+
     const valorHoraNormal = sueldoBase / HORAS_MENSUALES;
     const valorHoraExtra = valorHoraNormal * 1.5;
     const pagoHorasExtras = horasExtras * valorHoraExtra;
-    
+
     const ivss = sueldoBase * 0.04;
     const paroForzoso = sueldoBase * 0.01;
-    
+
     const sueldoNeto = sueldoBase + pagoHorasExtras + BONO_FIJO - ivss - paroForzoso;
-    
+
     return {
         sueldoBase,
         horasExtras,
@@ -160,12 +158,12 @@ router.get('/foto/:filename', (req, res) => {
     try {
         const filename = req.params.filename;
         const filePath = path.join(UPLOADS_DIR, filename);
-        
+
         const resolvedPath = path.resolve(filePath);
         if (!resolvedPath.startsWith(path.resolve(UPLOADS_DIR))) {
             return res.status(403).json({ error: 'Acceso denegado' });
         }
-        
+
         if (fs.existsSync(resolvedPath)) {
             res.sendFile(resolvedPath);
         } else {
@@ -180,7 +178,8 @@ router.get('/foto/:filename', (req, res) => {
 // GET /api/empleados - Obtener todos
 router.get('/', async (req, res) => {
     try {
-        const empleados = await gestor.obtenerTodos();
+        const empleadosTabla = req.db.tabla("empleados");
+        const empleados = await empleadosTabla.select()
         const empleadosCalculados = empleados.map(emp => ({
             ...emp,
             ...calcularDetalleNomina(emp)
@@ -202,21 +201,12 @@ router.post('/', uploadSingle, async (req, res) => {
         if (errores.length > 0) {
             // Eliminar archivo recién subido si falla la validación
             if (req.file) {
-                fs.unlink(req.file.path, () => {});
+                fs.unlink(req.file.path, () => { });
             }
             return res.status(400).json({ errores });
         }
-
-        // Verificar unicidad de cédula
-        const esUnica = await gestor.validarCedulaUnica(cedula);
-        if (!esUnica) {
-            if (req.file) {
-                fs.unlink(req.file.path, () => {});
-            }
-            return res.status(400).json({ errores: ['La cédula ya está registrada'] });
-        }
-
-        const nuevoEmpleado = await gestor.crearEmpleado({
+        const empleadosTabla = req.db.tabla("empleados");
+        await empleadosTabla.insert({
             nombre: nombre.trim(),
             cedula: cedula.trim(),
             cargo: cargo.trim(),
@@ -224,6 +214,7 @@ router.post('/', uploadSingle, async (req, res) => {
             horasExtras: Number(horasExtras),
             foto: req.file ? req.file.filename : null
         });
+        const nuevoEmpleado = await empleadosTabla.selectOne({ where: { cedula: cedula.trim() } })
 
         res.status(201).json({
             ...nuevoEmpleado,
@@ -232,7 +223,7 @@ router.post('/', uploadSingle, async (req, res) => {
     } catch (error) {
         console.error('Error POST empleado:', error);
         if (req.file) {
-            fs.unlink(req.file.path, () => {});
+            fs.unlink(req.file.path, () => { });
         }
         res.status(500).json({ error: 'Error al crear empleado' });
     }
@@ -244,10 +235,12 @@ router.put('/:id', uploadSingle, async (req, res) => {
         const id = req.params.id;
         const { nombre, cargo, sueldoBase, horasExtras } = req.body;
 
-        const empleadoExistente = await gestor.obtenerPorId(id);
+        const empleadosTabla = req.db.tabla("empleados");
+        const empleadoExistente = await empleadosTabla.selectOne({ where: { cedula: id } });
+
         if (!empleadoExistente) {
             if (req.file) {
-                fs.unlink(req.file.path, () => {});
+                fs.unlink(req.file.path, () => { });
             }
             return res.status(404).json({ error: 'Empleado no encontrado' });
         }
@@ -256,7 +249,7 @@ router.put('/:id', uploadSingle, async (req, res) => {
         const errores = validarActualizacion({ nombre, cargo, sueldoBase, horasExtras });
         if (errores.length > 0) {
             if (req.file) {
-                fs.unlink(req.file.path, () => {});
+                fs.unlink(req.file.path, () => { });
             }
             return res.status(400).json({ errores });
         }
@@ -270,10 +263,14 @@ router.put('/:id', uploadSingle, async (req, res) => {
 
         if (req.file) {
             datosActualizados.foto = req.file.filename;
+            if (empleadoExistente.foto) {
+                fs.unlink(path.join(UPLOADS_DIR, empleadoExistente.foto), () => { });
+            }
         }
 
-        const empleadoActualizado = await gestor.actualizarEmpleado(id, datosActualizados);
-        
+        await empleadosTabla.updateById(datosActualizados, id);
+        const empleadoActualizado = await empleadosTabla.selectOne({ where: { cedula: id } });
+
         res.json({
             ...empleadoActualizado,
             ...calcularDetalleNomina(empleadoActualizado)
@@ -281,7 +278,7 @@ router.put('/:id', uploadSingle, async (req, res) => {
     } catch (error) {
         console.error('Error en PUT /api/empleados/:id:', error);
         if (req.file) {
-            fs.unlink(req.file.path, () => {});
+            fs.unlink(req.file.path, () => { });
         }
         res.status(500).json({ error: 'Error al actualizar empleado: ' + error.message });
     }
@@ -291,17 +288,19 @@ router.put('/:id', uploadSingle, async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        
-        const empleadoExistente = await gestor.obtenerPorId(id);
+        const empleadosTabla = req.db.tabla("empleados")
+
+        const empleadoExistente = await empleadosTabla.selectOne({ where: { cedula: id } });
         if (!empleadoExistente) {
             return res.status(404).json({ error: 'Empleado no encontrado' });
         }
-        
-        const eliminado = await gestor.eliminarEmpleado(id);
-        if (!eliminado) {
-            return res.status(404).json({ error: 'Empleado no encontrado' });
+
+        if (empleadoExistente.foto) {
+            fs.unlink(path.join(UPLOADS_DIR, empleadoExistente.foto), () => { });
         }
-        
+
+        await empleadoExistente.delete();
+
         res.status(204).send();
     } catch (error) {
         console.error('Error DELETE empleado:', error);

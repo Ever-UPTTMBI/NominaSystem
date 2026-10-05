@@ -1,7 +1,6 @@
 // Clase modelo para Empleado
 export default class Empleado {
-    constructor(nombre, cedula, cargo, sueldoBase, horasExtras = 0, foto = null, id = null) {
-        this.id = id;
+    constructor(nombre, cedula, cargo, sueldoBase, horasExtras = 0, foto = null) {
         this.nombre = nombre;
         this.cedula = cedula;
         this.cargo = cargo;

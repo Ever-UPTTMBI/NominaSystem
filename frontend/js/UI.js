@@ -6,7 +6,7 @@ export default class UI {
         this.container = container;
         this.empleados = [];
         this.modoEdicion = false;
-        this.idEditando = null;
+        this.cedulaEditando = null;
         this.procesandoFormulario = false; // Bandera para evitar el doble disparo síncrono
 
         // Enlazar métodos para evitar duplicación de event listeners
@@ -67,17 +67,17 @@ export default class UI {
         const btnDelete = e.target.closest('.btn-eliminar');
 
         if (btnDetail) {
-            const id = btnDetail.getAttribute('data-id');
+            const id = btnDetail.getAttribute('data-cedula');
             this.mostrarDetalle(id);
         }
 
         if (btnEdit) {
-            const id = btnEdit.getAttribute('data-id');
+            const id = btnEdit.getAttribute('data-cedula');
             this.prepararEdicion(id);
         }
 
         if (btnDelete) {
-            const id = btnDelete.getAttribute('data-id');
+            const id = btnDelete.getAttribute('data-cedula');
             await this.manejarEliminacion(id);
         }
     }
@@ -206,9 +206,9 @@ export default class UI {
                 <td>${emp.cargo}</td>
                 <td>${sueldoNetoNum.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs</td>
                 <td>
-                    <button class="btn-detail btn-detalle" data-id="${emp.id}">👁️ Detalle</button>
-                    <button class="btn-edit btn-editar" data-id="${emp.id}">✏️ Editar</button>
-                    <button class="btn-delete btn-eliminar" data-id="${emp.id}">🗑️ Eliminar</button>
+                    <button class="btn-detail btn-detalle" data-cedula="${emp.cedula}">👁️ Detalle</button>
+                    <button class="btn-edit btn-editar" data-cedula="${emp.cedula}">✏️ Editar</button>
+                    <button class="btn-delete btn-eliminar" data-cedula="${emp.cedula}">🗑️ Eliminar</button>
                 </td>
             `;
             this.tablaBody.appendChild(tr);
@@ -236,7 +236,7 @@ export default class UI {
             return;
         }
 
-        const emp = this.empleados.find(e => e.id === id);
+        const emp = this.empleados.find(e => e.cedula === id);
         const nombreEmp = emp ? emp.nombre : 'este empleado';
 
         const confirmado = await this.mostrarConfirmacionModal(`¿Estás seguro de que deseas eliminar a ${nombreEmp}?`);
@@ -244,7 +244,7 @@ export default class UI {
         if (confirmado) {
             try {
                 await eliminarEmpleado(id);
-                this.empleados = this.empleados.filter(e => e.id !== id);
+                this.empleados = this.empleados.filter(e => e.cedula !== id);
                 this.renderizarTabla(this.empleados);
                 this.lanzarToast(`${nombreEmp} eliminado correctamente`, 'exito');
             } catch (error) {
@@ -254,7 +254,7 @@ export default class UI {
     }
 
     prepararEdicion(id) {
-        const emp = this.empleados.find(e => e.id === id);
+        const emp = this.empleados.find(e => e.cedula === id);
         if (emp) {
             window.empleadoEditando = emp;
             window.cargarVista('empleado-form');
@@ -262,7 +262,7 @@ export default class UI {
     }
 
     mostrarDetalle(id) {
-        const emp = this.empleados.find(e => e.id === id);
+        const emp = this.empleados.find(e => e.cedula === id);
         if (!emp) return;
 
         const getInitials = (nombre) => {
@@ -394,9 +394,9 @@ export default class UI {
             this.procesandoFormulario = true;
             if (this.btnGuardar) this.btnGuardar.disabled = true;
 
-            if (this.modoEdicion && this.idEditando) {
-                const empleadoEditado = await actualizarEmpleado(this.idEditando, formData);
-                const index = this.empleados.findIndex(emp => emp.id === this.idEditando);
+            if (this.modoEdicion && this.cedulaEditando) {
+                const empleadoEditado = await actualizarEmpleado(this.cedulaEditando, formData);
+                const index = this.empleados.findIndex(emp => emp.cedula === this.cedulaEditando);
                 if (index !== -1) {
                     this.empleados[index] = empleadoEditado;
                 }
@@ -425,7 +425,7 @@ export default class UI {
 
     resetearFormulario() {
         this.modoEdicion = false;
-        this.idEditando = null;
+        this.cedulaEditando = null;
         window.empleadoEditando = null;
         if (this.form) this.form.reset();
         if (this.cedulaInput) {

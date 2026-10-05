@@ -35,8 +35,8 @@ export async function crearEmpleado(formData) {
     return await resp.json();
 }
 
-export async function actualizarEmpleado(id, formData) {
-    const resp = await fetch(`${API_URL}/${id}`, {
+export async function actualizarEmpleado(cedula, formData) {
+    const resp = await fetch(`${API_URL}/${cedula}`, {
         method: 'PUT',
         body: formData
     });
@@ -48,9 +48,9 @@ export async function actualizarEmpleado(id, formData) {
     return await resp.json();
 }
 
-export async function eliminarEmpleado(id) {
+export async function eliminarEmpleado(cedula) {
 
-    const resp = await fetch(`${API_URL}/${id}`, { 
+    const resp = await fetch(`${API_URL}/${cedula}`, { 
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
     });
