@@ -26,12 +26,12 @@ const usuarios = new tablaModel("usuarios", {
     ],
 })
 async function iniciar() {
-    const rootPass = "linux123";
+    const rootPass = "1234";
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(rootPass, salt);
     usuarios.insert({
         "id_usuarios": 1,
-        "user": "sysnom@gmail.com",
+        "user": "root",
         "hash": hashedPass
     })
 }
