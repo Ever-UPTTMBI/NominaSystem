@@ -1,0 +1,101 @@
+<div class="view-recibos">
+    <div class="view-header">
+        <div>
+            <h2>🧾 Recibos de Pago y Liquidaciones</h2>
+            <p class="view-subtitle">Consulta, audita y genera los comprobantes individuales de pago por trabajador.</p>
+        </div>
+        <button id="btnImprimirTodosRecibos" class="btn btn-secondary">🖨️ Imprimir Listado</button>
+    </div>
+
+    <!-- Resumen rápido de la nómina seleccionada -->
+    <div class="stats-panel mini-stats" id="recibosStatsPanel" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+        <div class="stat-card" style="flex:1;">
+            <span class="stat-label">Recibos Emitidos</span>
+            <span class="stat-value" id="statRecibosCount">0</span>
+        </div>
+        <div class="stat-card" style="flex:1;">
+            <span class="stat-label">Total Asignaciones</span>
+            <span class="stat-value" id="statTotalAsignaciones" style="color: #16a34a;">0.00 Bs</span>
+        </div>
+        <div class="stat-card" style="flex:1;">
+            <span class="stat-label">Total Deducciones</span>
+            <span class="stat-value" id="statTotalDeducciones" style="color: #dc2626;">0.00 Bs</span>
+        </div>
+        <div class="stat-card" style="flex:1;">
+            <span class="stat-label">Monto Neto a Pagar</span>
+            <span class="stat-value" id="statTotalNeto" style="color: #2563eb;">0.00 Bs</span>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <div class="filter-select-wrapper" style="flex: 1.2;">
+            <label for="filtroNominaPeriodo" class="filter-label">Periodo:</label>
+            <select id="filtroNominaPeriodo" class="filter-select">
+                <option value="">Todos los Periodos</option>
+            </select>
+        </div>
+        <div class="search-input-wrapper" style="flex: 2;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="buscadorRecibo" placeholder="Buscar por cédula o nombre de empleado...">
+        </div>
+    </div>
+
+    <!-- Modal para Ajustar Recibo -->
+    <div id="ajuste-recibo-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <h3>Ajustar Conceptos de Recibo</h3>
+            <p class="modal-subtitle">Modifica días trabajados, bonos adicionales o deducciones manuales.</p>
+            <form id="ajusteReciboForm">
+                <input type="hidden" id="ajusteReciboId" value="">
+                
+                <div class="form-row-2" style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left; margin-top: 1rem;">
+                    <div class="form-group">
+                        <label for="ajusteDiasTrabajados">Días Trabajados</label>
+                        <input type="number" id="ajusteDiasTrabajados" min="1" max="30" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ajusteHorasExtras">Horas Extras</label>
+                        <input type="number" id="ajusteHorasExtras" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-row-2" style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left;">
+                    <div class="form-group">
+                        <label for="ajusteBonificaciones">Bonificaciones (Bs)</label>
+                        <input type="number" step="0.01" min="0" id="ajusteBonificaciones" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ajusteDeducciones">Deducciones Totales (Bs)</label>
+                        <input type="number" step="0.01" min="0" id="ajusteDeducciones" required>
+                    </div>
+                </div>
+
+                <div class="modal-botones" style="margin-top: 1.5rem;">
+                    <button type="button" id="btnAjusteCancelar" class="modal-btn modal-btn-cancelar">Cancelar</button>
+                    <button type="submit" id="btnAjusteGuardar" class="modal-btn modal-btn-confirmar">Guardar Ajuste</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 70px;">Recibo</th>
+                    <th>Empleado</th>
+                    <th>Periodo</th>
+                    <th class="text-right">Sueldo Quincena</th>
+                    <th class="text-right">H. Extras</th>
+                    <th class="text-right">Bonos</th>
+                    <th class="text-right">Deducciones</th>
+                    <th class="text-right">Total Neto</th>
+                    <th class="text-right" style="width: 150px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaRecibosBody">
+                <tr class="fila-vacia"><td colspan="9">Cargando recibos de nómina...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

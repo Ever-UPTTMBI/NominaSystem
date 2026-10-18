@@ -1,10 +1,8 @@
-version: '3.8'
-
 services:
   basededatos:
     image: mariadb:10.11
     container_name: inventario_db1
-    #esto es para que no se inicie la base de datos cada vez que se enciende la pc
+    # esto es para que no se inicie la base de datos cada vez que se enciende la pc
     restart: "no"
     environment:
       MARIADB_ROOT_PASSWORD: root
@@ -13,6 +11,18 @@ services:
       - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_nomina
+    restart: "no"
+    environment:
+      PMA_HOST: basededatos
+      PMA_PORT: 3306
+    ports:
+      - "8080:80"
+    depends_on:
+      - basededatos
 
 volumes:
   mariadb_data:

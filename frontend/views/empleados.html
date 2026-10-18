@@ -1,24 +1,40 @@
 <div class="view-empleados">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-        <h2>👥 Gestión de Empleados</h2>
-        <button id="btnAgregarEmpleado" class="btn btn-primary">➕ Agregar empleado</button>
+    <div class="view-header">
+        <div>
+            <h2>👥 Gestión de Empleados</h2>
+            <p class="view-subtitle">Administra el personal, salarios base y asignación de departamentos.</p>
+        </div>
+        <button id="btnAgregarEmpleado" class="btn btn-primary">➕ Registrar Empleado</button>
     </div>
-    <div class="search-container">
-        <input type="text" id="buscador" placeholder="🔍 Buscar por cédula o nombre...">
+
+    <div class="filter-bar">
+        <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="buscador" placeholder="Buscar por cédula, nombre o cargo...">
+        </div>
+        <div class="filter-select-wrapper">
+            <label for="filtroDepartamento" class="filter-label">Departamento:</label>
+            <select id="filtroDepartamento" class="filter-select">
+                <option value="">Todos los Departamentos</option>
+            </select>
+        </div>
     </div>
+
     <div class="table-container">
         <table>
             <thead>
                 <tr>
-                    <th>Nombre</th>
+                    <th>Empleado</th>
                     <th>Cédula</th>
                     <th>Cargo</th>
-                    <th>Sueldo</th>
-                    <th>Acciones</th>
+                    <th>Departamento</th>
+                    <th class="text-right">Sueldo Base</th>
+                    <th class="text-center">H. Extras</th>
+                    <th class="text-right">Acciones</th>
                 </tr>
             </thead>
             <tbody id="tablaBody">
-                <tr class="fila-vacia"><td colspan="5">Cargando empleados...</td></tr>
+                <tr class="fila-vacia"><td colspan="7">Cargando nómina de empleados...</td></tr>
             </tbody>
         </table>
     </div>

@@ -1,35 +1,64 @@
 <div class="view-empleado-form">
-    <h2 id="formTitle">Registrar Empleado</h2>
-    <form id="empleadoForm">
-        <input type="hidden" id="empleadoId" value="">
-        <div class="form-group">
-            <label for="nombre">Nombre Completo</label>
-            <input type="text" id="nombre" placeholder="Ej. Ana Rodríguez" required>
+    <div class="form-card">
+        <div class="form-header">
+            <div>
+                <h2 id="formTitle">Registrar Empleado</h2>
+                <p class="view-subtitle">Ingresa los datos personales y contractuales del trabajador.</p>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnVolverEmpleados">← Volver al listado</button>
         </div>
-        <div class="form-group">
-            <label for="cedula">Cédula de Identidad</label>
-            <input type="text" id="cedula" placeholder="V-12345678 o E-12345678" required>
-        </div>
-        <div class="form-group">
-            <label for="cargo">Cargo</label>
-            <input type="text" id="cargo" placeholder="Ej. Desarrollador Frontend" required>
-        </div>
-        <div class="form-group">
-            <label for="sueldo">Sueldo Base Mensual</label>
-            <input type="number" id="sueldo" step="0.01" placeholder="Mínimo 1000 Bs" required>
-        </div>
-        <div class="form-group">
-            <label for="horasExtras">Horas Extras Trabajadas</label>
-            <input type="number" id="horasExtras" min="0" step="1" placeholder="Ej. 10" value="0" required>
-        </div>
-        <div class="form-group">
-            <label for="foto">Foto de Perfil</label>
-            <input type="file" id="foto" accept="image/*">
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary" id="btnGuardar">Guardar</button>
-            <button type="button" class="btn btn-secondary" id="btnCancelar" style="display:none;">Cancelar</button>
-        </div>
-    </form>
-    <div id="mensajeError" class="error-message"></div>
+
+        <form id="empleadoForm" class="grid-form">
+            <input type="hidden" id="empleadoId" value="">
+
+            <div class="form-group full-width">
+                <label for="nombre">Nombre Completo *</label>
+                <input type="text" id="nombre" placeholder="Ej. Ana Valentina Rodríguez" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cedula">Cédula de Identidad *</label>
+                <input type="text" id="cedula" placeholder="Ej. V-12345678" required>
+                <small class="form-hint">Formato V-XXXXXXXX o E-XXXXXXXX</small>
+            </div>
+
+            <div class="form-group">
+                <label for="cargo">Cargo u Ocupación *</label>
+                <input type="text" id="cargo" placeholder="Ej. Contador Senior" required>
+            </div>
+
+            <div class="form-group">
+                <label for="departamento_id">Departamento Asignado</label>
+                <select id="departamento_id" class="form-select">
+                    <option value="">-- Sin departamento --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sueldo">Sueldo Base Mensual (Bs) *</label>
+                <input type="number" id="sueldo" step="0.01" min="1000" placeholder="Mínimo 1000.00" required>
+            </div>
+
+            <div class="form-group">
+                <label for="horasExtras">Horas Extras del Mes</label>
+                <input type="number" id="horasExtras" min="0" step="1" placeholder="Ej. 8" value="0">
+            </div>
+
+            <div class="form-group full-width">
+                <label for="foto">Foto de Perfil (Opcional)</label>
+                <div class="file-upload-box">
+                    <input type="file" id="foto" accept="image/*">
+                    <div id="fotoPreviewContainer" class="foto-preview-container" style="display:none;">
+                        <img id="fotoPreview" src="" alt="Vista previa">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary" id="btnGuardar">Guardar Empleado</button>
+                <button type="button" class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+            </div>
+        </form>
+        <div id="mensajeError" class="error-message" style="display:none;"></div>
+    </div>
 </div>

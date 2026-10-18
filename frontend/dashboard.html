@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NominaSystem - Gestion de Nominas Web</title>
+    <title>NominaSystem - Gestión Integral de Nómina y RRHH</title>
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/dashboard.css">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
@@ -12,59 +12,98 @@
 <body>
     <div id="toast-container"></div>
 
-<div id="confirm-modal" class="modal-overlay">
-    <div class="modal-box">
-        <h3>¿Estás seguro?</h3>
-        <p id="confirm-modal-msg">¿Deseas eliminar este registro de forma permanente?</p>
-        <div class="modal-botones">
-            <button id="btn-modal-cancelar" class="modal-btn modal-btn-cancelar">Cancelar</button>
-            <button id="btn-modal-confirmar" class="modal-btn modal-btn-confirmar">Eliminar</button>
+    <!-- Modal de confirmación global -->
+    <div id="confirm-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <h3>¿Estás seguro?</h3>
+            <p id="confirm-modal-msg">¿Deseas eliminar este registro de forma permanente?</p>
+            <div class="modal-botones">
+                <button id="btn-modal-cancelar" class="modal-btn modal-btn-cancelar">Cancelar</button>
+                <button id="btn-modal-confirmar" class="modal-btn modal-btn-confirmar">Eliminar</button>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="detalle-modal" class="modal-overlay">
-    <div class="modal-box receipt-box">
-        <div class="receipt-header">
-            <h3>Recibo de Nómina Detallado</h3>
-            <p>Resumen de Cálculo de Sueldo Neto</p>
-        </div>
-        <div class="receipt-body" id="detalle-modal-body">
-            <!-- El desglose se cargará dinámicamente -->
-        </div>
-        <div class="modal-botones">
-            <button id="btn-detalle-cerrar" class="modal-btn modal-btn-cancelar">Cerrar Recibo</button>
+    <!-- Modal de Recibo de Pago Detallado / Comprobante -->
+    <div id="detalle-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-box receipt-box">
+            <div class="receipt-header">
+                <div class="receipt-empresa-header">
+                    <img src="/img/logo-blue.png" alt="Logo" class="receipt-logo" onerror="this.style.display='none'">
+                    <div>
+                        <h3>NominaSystem, S.A.</h3>
+                        <p class="receipt-rif">RIF: J-12345678-9 • Dpto. de Recursos Humanos</p>
+                    </div>
+                </div>
+                <div class="receipt-badge-title">COMPROBANTE DE PAGO DE NÓMINA</div>
+            </div>
+            
+            <div class="receipt-body" id="detalle-modal-body">
+                <!-- Se inyecta dinámicamente -->
+            </div>
+
+            <div class="modal-botones no-print" style="margin-top: 1.5rem;">
+                <button id="btn-detalle-imprimir" class="modal-btn modal-btn-confirmar">🖨️ Imprimir Recibo</button>
+                <button id="btn-detalle-cerrar" class="modal-btn modal-btn-cancelar">Cerrar</button>
+            </div>
         </div>
     </div>
-</div>
 
     <div class="dashboard-layout">
         <!-- Menú lateral -->
         <aside class="sidebar">
             <div class="sidebar-header">
-            <div class="logo-container">
-              <img src="/img/logo-blue.png" alt="NominaSystem" class="logo logo-light">
-              <img src="/img/logo-dark.png" alt="NominaSystem" class="logo logo-dark">
-            </div> 
+                <div class="logo-container">
+                    <img src="/img/logo-blue.png" alt="NominaSystem" class="logo logo-light" onerror="this.style.display='none'">
+                    <img src="/img/logo-dark.png" alt="NominaSystem" class="logo logo-dark" onerror="this.style.display='none'">
+                </div> 
                 <h2>NominaSystem</h2>
-                <p>Gestión de Nominas - RRHH</p>
+                <p>Gestión de Nóminas & RRHH</p>
             </div>
+
             <nav class="sidebar-nav">
-                <button class="nav-btn" data-view="estadisticas">📊 Estadísticas</button>
-                <button class="nav-btn active" data-view="empleados">👥 Empleados</button>
-                <button class="nav-btn" data-view="reporte">🧾 Reporte de Nómina</button>
+                <button class="nav-btn" data-view="estadisticas">
+                    <span class="nav-icon">📊</span>
+                    <span>Estadísticas</span>
+                </button>
+                <button class="nav-btn active" data-view="empleados">
+                    <span class="nav-icon">👥</span>
+                    <span>Empleados</span>
+                </button>
+                <button class="nav-btn" data-view="departamentos">
+                    <span class="nav-icon">🏢</span>
+                    <span>Departamentos</span>
+                </button>
+                <button class="nav-btn" data-view="nominas">
+                    <span class="nav-icon">📅</span>
+                    <span>Nóminas</span>
+                </button>
+                <button class="nav-btn" data-view="recibos">
+                    <span class="nav-icon">🧾</span>
+                    <span>Recibos de Pago</span>
+                </button>
+                <button class="nav-btn" data-view="reporte">
+                    <span class="nav-icon">📋</span>
+                    <span>Reporte General</span>
+                </button>
             </nav>
+
             <div class="sidebar-footer">
-                <button id="nightModeBtn" class="control-btn" title="Modo nocturno">🌙</button>
-                <button id="visualProtectionBtn" class="control-btn" title="Protección visual">👁️</button>
-                <button id="logoutBtn" class="btn btn-secondary btn-full">Cerrar sesión</button>
+                <div class="theme-controls">
+                    <button id="nightModeBtn" class="control-btn" title="Modo nocturno">🌙</button>
+                    <button id="visualProtectionBtn" class="control-btn" title="Protección visual">👁️</button>
+                </div>
+                <button id="logoutBtn" class="btn btn-secondary btn-full">
+                    <span>🚪</span>
+                    <span>Cerrar sesión</span>
+                </button>
             </div>
         </aside>
 
         <!-- Contenido principal -->
         <main class="main-content">
             <div id="view-container" class="view-container">
-                <!-- Aquí se cargarán las vistas -->
+                <!-- Se cargan las vistas HTML dinámicamente -->
             </div>
         </main>
     </div>

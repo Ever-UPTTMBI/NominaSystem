@@ -977,3 +977,464 @@ body.night-mode input[type="file"]::file-selector-button:hover {
         color: #333333 !important;
     }
 }
+
+/* ============================================
+   ESTILOS MODERNOS Y NUEVAS VISTAS
+   ============================================ */
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.view-subtitle {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 0.2rem;
+}
+
+.filter-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.search-input-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 260px;
+}
+
+.search-input-wrapper .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.95rem;
+    opacity: 0.7;
+}
+
+.search-input-wrapper input {
+    width: 100%;
+    padding: 0.65rem 1rem 0.65rem 2.6rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    background: #ffffff;
+    color: #1e293b;
+    outline: none;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.search-input-wrapper input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.filter-select-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    white-space: nowrap;
+}
+
+.filter-select {
+    padding: 0.65rem 1.2rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 2rem;
+    font-size: 0.88rem;
+    background: #ffffff;
+    color: #1e293b;
+    cursor: pointer;
+    outline: none;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.filter-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ============================================
+   BADGES (ETIQUETAS)
+   ============================================ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 1px solid transparent;
+}
+
+.badge-dept {
+    background: #e0f2fe;
+    color: #0369a1;
+    border-color: #bae6fd;
+}
+
+.badge-cedula {
+    background: #f1f5f9;
+    color: #475569;
+    font-family: monospace;
+    font-size: 0.82rem;
+}
+
+.badge-he {
+    background: #ecfdf5;
+    color: #047857;
+    border-color: #a7f3d0;
+}
+
+.badge-borrador {
+    background: #fef3c7;
+    color: #b45309;
+    border-color: #fde68a;
+}
+
+.badge-procesada {
+    background: #e0e7ff;
+    color: #4338ca;
+    border-color: #c7d2fe;
+}
+
+.badge-pagada {
+    background: #dcfce7;
+    color: #15803d;
+    border-color: #bbf7d0;
+}
+
+.badge-anulada {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-color: #fecaca;
+}
+
+/* ============================================
+   GRUPOS DE BOTONES DE ACCIÓN
+   ============================================ */
+.action-buttons-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    justify-content: flex-end;
+}
+
+.btn-sm {
+    padding: 0.35rem 0.8rem !important;
+    font-size: 0.82rem !important;
+    border-radius: 1.5rem !important;
+}
+
+/* ============================================
+   FORMULARIO EN TARJETA ELEVADA
+   ============================================ */
+.form-card {
+    background: #ffffff;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 1rem;
+}
+
+.grid-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.grid-form .full-width {
+    grid-column: span 2;
+}
+
+.form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.75rem;
+    font-size: 0.95rem;
+    background: #ffffff;
+    color: #1e293b;
+    outline: none;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-hint {
+    display: block;
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 0.3rem;
+}
+
+.file-upload-box {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 0.75rem;
+}
+
+.foto-preview-container {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #3b82f6;
+    flex-shrink: 0;
+}
+
+.foto-preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ============================================
+   RECIBO / COMPROBANTE DE PAGO
+   ============================================ */
+.receipt-box {
+    max-width: 650px !important;
+    width: 90% !important;
+    padding: 2.2rem !important;
+    background: #ffffff;
+    border-radius: 1.25rem;
+}
+
+.receipt-empresa-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.receipt-empresa-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1e293b;
+}
+
+.receipt-rif {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: 0.15rem;
+}
+
+.receipt-badge-title {
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: #f1f5f9;
+    padding: 0.4rem 1rem;
+    border-radius: 0.5rem;
+    color: #1e3c72;
+    margin-bottom: 1.25rem;
+}
+
+.receipt-subtotal-row th {
+    background: #f8fafc;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.6rem 0.8rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.receipt-total-row th {
+    background: #f1f5f9;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.8rem;
+    border-top: 2px solid #cbd5e1;
+}
+
+.text-highlight {
+    color: #1e3c72;
+    font-size: 1.15rem;
+}
+
+.receipt-signatures-box {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+}
+
+.receipt-signature {
+    text-align: center;
+    width: 180px;
+}
+
+.linea-firma {
+    border-top: 1px solid #94a3b8;
+    margin-bottom: 0.4rem;
+}
+
+.receipt-signature span {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+/* ============================================
+   MODO NOCTURNO PARA ELEMENTOS NUEVOS
+   ============================================ */
+body.night-mode .form-card,
+body.night-mode .search-input-wrapper input,
+body.night-mode .filter-select,
+body.night-mode .form-select,
+body.night-mode .receipt-box,
+body.night-mode .file-upload-box {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f8fafc;
+}
+
+body.night-mode .view-subtitle,
+body.night-mode .form-hint,
+body.night-mode .receipt-rif,
+body.night-mode .receipt-signature span,
+body.night-mode .filter-label {
+    color: #94a3b8;
+}
+
+body.night-mode .badge-dept {
+    background: rgba(3, 105, 161, 0.2);
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.3);
+}
+
+body.night-mode .badge-cedula {
+    background: #0f172a;
+    color: #cbd5e1;
+}
+
+body.night-mode .badge-he {
+    background: rgba(4, 120, 87, 0.2);
+    color: #34d399;
+    border-color: rgba(52, 211, 153, 0.3);
+}
+
+body.night-mode .badge-borrador {
+    background: rgba(180, 83, 9, 0.2);
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+body.night-mode .badge-procesada {
+    background: rgba(67, 56, 202, 0.2);
+    color: #818cf8;
+    border-color: rgba(129, 140, 248, 0.3);
+}
+
+body.night-mode .badge-pagada {
+    background: rgba(21, 128, 61, 0.2);
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.3);
+}
+
+body.night-mode .badge-anulada {
+    background: rgba(185, 28, 28, 0.2);
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.3);
+}
+
+body.night-mode .receipt-badge-title {
+    background: #0f172a;
+    color: #38bdf8;
+}
+
+body.night-mode .receipt-subtotal-row th {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+body.night-mode .receipt-total-row th {
+    background: #0f172a;
+    border-color: #475569;
+}
+
+body.night-mode .text-highlight {
+    color: #38bdf8;
+}
+
+/* ============================================
+   IMPRESIÓN DEL RECIBO DESDE EL MODAL
+   ============================================ */
+@media print {
+    body * {
+        visibility: hidden !important;
+    }
+
+    #detalle-modal.activo,
+    #detalle-modal.activo .receipt-box,
+    #detalle-modal.activo .receipt-box * {
+        visibility: visible !important;
+    }
+
+    #detalle-modal.activo {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        background: transparent !important;
+        display: block !important;
+        padding: 0 !important;
+    }
+
+    #detalle-modal.activo .receipt-box {
+        box-shadow: none !important;
+        border: 1px solid #000000 !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        max-width: 700px !important;
+        padding: 20px !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+
+    #detalle-modal.activo .no-print {
+        display: none !important;
+    }
+
+    #detalle-modal.activo .receipt-table th,
+    #detalle-modal.activo .receipt-table td {
+        border-bottom: 1px solid #cccccc !important;
+        color: #000000 !important;
+    }
+}
+

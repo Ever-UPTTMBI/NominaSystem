@@ -1,39 +1,54 @@
 <div class="view-estadisticas">
-    <h2>📊 Estadísticas de Nómina</h2>
-    <div class="stats-panel" style="display:flex; gap:1.5rem; margin-top:1.5rem;">
+    <div class="view-header">
+        <div>
+            <h2>📊 Tablero y Analítica de Nómina</h2>
+            <p class="view-subtitle">Métricas en tiempo real sobre la fuerza laboral, distribución de costos y conceptos salariales.</p>
+        </div>
+    </div>
+
+    <div class="stats-panel" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-top:1.5rem;">
         <div class="stat-card">
-            <span class="stat-label">Total Empleados</span>
+            <span class="stat-label">👥 Total Empleados</span>
             <span class="stat-value" id="totalEmpleados">0</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">Gasto Mensual Total</span>
+            <span class="stat-label">🏢 Departamentos</span>
+            <span class="stat-value" id="totalDepartamentos">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">📅 Periodos de Nómina</span>
+            <span class="stat-value" id="totalNominas">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">💰 Gasto Mensual Base</span>
             <span class="stat-value" id="gastoTotal">0.00 Bs</span>
         </div>
     </div>
+
     <!-- Panel de gráficos integrados -->
     <div class="charts-panel" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1.5rem; margin-top:2rem;">
         <div class="stat-card chart-card" style="text-align: left; padding: 1.5rem;">
-            <span class="stat-label" style="margin-bottom:1.2rem; display:block;">Distribución de Cargos</span>
+            <span class="stat-label" style="margin-bottom:1.2rem; display:block; font-weight: 600;">Personal por Departamento</span>
             <div class="chart-container" style="position:relative; height:250px; width:100%;">
                 <canvas id="cargosChart"></canvas>
             </div>
         </div>
         <div class="stat-card chart-card" style="text-align: left; padding: 1.5rem;">
-            <span class="stat-label" style="margin-bottom:1.2rem; display:block;">Sueldos Netos por Empleado</span>
+            <span class="stat-label" style="margin-bottom:1.2rem; display:block; font-weight: 600;">Sueldos por Empleado</span>
             <div class="chart-container" style="position:relative; height:250px; width:100%;">
                 <canvas id="sueldosChart"></canvas>
             </div>
         </div>
         <!-- Ranking de Horas Extras -->
         <div class="stat-card chart-card" style="text-align: left; padding: 1.5rem;">
-            <span class="stat-label" style="margin-bottom:1.2rem; display:block;">Ranking de Horas Extras por Empleado</span>
+            <span class="stat-label" style="margin-bottom:1.2rem; display:block; font-weight: 600;">Horas Extras Acumuladas</span>
             <div class="chart-container" style="position:relative; height:250px; width:100%;">
                 <canvas id="horasExtrasChart"></canvas>
             </div>
         </div>
         <!-- Comparativa Asignaciones vs Deducciones -->
         <div class="stat-card chart-card" style="text-align: left; padding: 1.5rem;">
-            <span class="stat-label" style="margin-bottom:1.2rem; display:block;">Asignaciones vs. Deducciones Totales</span>
+            <span class="stat-label" style="margin-bottom:1.2rem; display:block; font-weight: 600;">Asignaciones vs Deducciones</span>
             <div class="chart-container" style="position:relative; height:250px; width:100%;">
                 <canvas id="comparativaConceptosChart"></canvas>
             </div>

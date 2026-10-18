@@ -4,9 +4,12 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const empleadosRouter = require('./routes/empleados');
-const connect = require('./db.js');
+const departamentosRouter = require('./routes/departamentos');
+const nominasRouter = require('./routes/nominas');
+const recibosRouter = require('./routes/recibos');
+const connect = require('./db.sqlite.js');
 const bcrypt = require('bcryptjs');
-const app = express(); 
+const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Secreto para firmar los JWT (en producción usar variable de entorno)
@@ -100,8 +103,11 @@ app.post('/api/logout', (req, res) => {
     res.json({ success: true });
 });
 
-// Proteger rutas de empleados con el middleware JWT
+// Proteger rutas con el middleware JWT
 app.use('/api/empleados', verificarToken, empleadosRouter);
+app.use('/api/departamentos', verificarToken, departamentosRouter);
+app.use('/api/nominas', verificarToken, nominasRouter);
+app.use('/api/recibos', verificarToken, recibosRouter);
 
 // Servir index.html
 app.get('/', (req, res) => {
