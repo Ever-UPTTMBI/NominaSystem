@@ -179,7 +179,7 @@ router.get('/foto/:filename', (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const empleadosTabla = req.db.tabla("empleados");
-        const empleados = await empleadosTabla.select()
+        const empleados = await empleadosTabla.select({})
         const empleadosCalculados = empleados.map(emp => ({
             ...emp,
             ...calcularDetalleNomina(emp)
